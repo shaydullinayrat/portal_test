@@ -1,0 +1,333 @@
+{% block content %}
+<html style = "height: 100% ; width:100%; ">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="/static/css/custom.min.css">
+    <style>
+      .black_style9{
+        background-color: black;
+        opacity: 0.9;
+        border-width:0; 
+        color: white;
+      }
+      .black_style{
+        background-color: black;
+        opacity: 0.8;
+        border-width:0; 
+        color: white;
+      }
+    </style>
+</head>
+<body style = "background-image: url(/static/custom/css/fon_1.jpg); background-position: center center; background-repeat: no-repeat  ; background-size: cover; "> 
+<!-- <img src="/static/custom/css/fon_1.jpg" alt="Винни-Пух" width="100%"> -->
+<div id = "modal_settings" class="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header ">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> 
+        <button onclick = "restart(); return false;"  class="close" tabindex = "-1" type="button" style=" margin-right:20px"  >♻   </button>
+        <button onclick = "change_background(); return false;"  class="close" tabindex = "-1" type="button" style=" margin-right:20px"  >☻   </button>
+        <h4 class="modal-title ">Настройки</h4>
+      </div>
+      	<div class="panel-body col-lg-7 col-md-7 col-sm-7 ">
+          <div class="panel-body  " style=" text-align:center"> <h4>Правильность выполнения</h4>
+            <div id = "pravilno_text" style=" text-align:center"> 0 из 0 (0) </div>
+            <div  class="progress progress-striped active">
+                  <div  id = "pravilno_progress" class="progress-bar progress-bar-success" style="width: 0"></div>
+          </div>
+        </div>
+        <div class="panel-body " style=" text-align:center"> <h4>Модуль</h4>
+							<div class="btn-group btn-group-justified ">
+				    <a  id = "button_prosto" onclick = "button_prosto_f(); return false;" style = " text-transform:  none"  class="btn btn-default  active" title="Простой счет">Просто</a>
+				    <a  id = "button_brat" onclick = "button_brat_f(); return false;" class="btn btn-default " title="Помощь брата" style = " text-transform:  none">Брат</a>
+				    <a  id = "button_drug" onclick = "button_drug_f(); return false;" class="btn btn-default " title="Помощь друга" style = " text-transform:  none">Друг</a>
+				    <a  id = "button_combo" onclick = "button_combo_f(); return false;" class="btn btn-default " title="Комбинированный счет" style = " text-transform:  none">Комбо</a>
+				    <a  id = "button_random" onclick = "button_random_f(); return false;" class="btn btn-default " title="Произвольный счет" style = " text-transform:  none">Произв</a>
+				</div> 
+					<div class="btn-group btn-group-justified">
+					  <a  id = "button_1"  class="btn btn-default active disabled" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;" >1</a>
+					  <a  id = "button_2"  class="btn btn-default active disabled" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">2</a>
+					  <a  id = "button_3"  class="btn btn-default active disabled" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">3</a>
+					  <a  id = "button_4"  class="btn btn-default active disabled" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">4</a>
+					  <a  id = "button_5"  class="btn btn-default active" onclick = "check_5();return false;">5</a>
+					  <a  id = "button_6"  class="btn btn-default active" onclick = "check_6();return false;">6</a>
+					  <a  id = "button_7"  class="btn btn-default active" onclick = "check_7();return false;">7</a>
+					  <a  id = "button_8"  class="btn btn-default active" onclick = "check_8();return false;">8</a>
+					  <a  id = "button_9"  class="btn btn-default active" onclick = "check_9();return false;">9</a>
+					</div> 
+					<div class="btn-group btn-group-justified">
+					  <a  id = "button_check_all" class="btn btn-default active hidden" onclick = "check_all(); return false;">Выбрать все</a>
+					</div> 
+			</div>
+			<div  class="panel-body" style=" text-align:center"> <h4>Сложность</h4>
+				<div class="btn-group btn-group-justified">	
+				    <a  class="btn btn-default active" id = "Button_Kolcifr_1" onclick = "Kolcifr_1();return false;">1</a>
+				    <a  class="btn btn-default" id = "Button_Kolcifr_2" onclick = "Kolcifr_2();return false;">10</a>
+				    <a  class="btn btn-default" id = "Button_Kolcifr_3" onclick = "Kolcifr_3();return false;">100</a>
+				    <a  class="btn btn-default" id = "Button_Kolcifr_4" onclick = "Kolcifr_4();return false;">1000</a>
+            <a  class="btn btn-default active" id = "Button_half" onclick = "button_half_f();return false;">1/2</a>
+				</div> 
+			</div>
+			<div  class="panel-body" style=" text-align:center"> <h4>Операции</h4>
+				<div class="btn-group btn-group-justified">
+				    <a  class="btn btn-default" id = "Button_operation_plus" title="Сложение" onclick = "operation_plus();return false;" >+</a>
+				    <a  class="btn btn-default" id = "Button_operation_minus" title="Вычитание" onclick = "operation_minus();return false;">-</a>
+				    <a  class="btn btn-default active" id = "Button_operation_plus_minus" title="Сложение+Вычитание" onclick = "operation_plus_minus();return false;">+/-</a>
+				</div> 
+			</div>
+			
+			
+      </div>
+      <div class="panel-body col-lg-5 col-md-5 col-sm-5 ">	
+        <div class="panel-body" style="  text-align:center"> <h4> Количество слагаемых </h4>
+        <div class="btn-group btn-group-justified"> 
+            <a  class="btn btn-default " onclick = "Kolslog_minus();return false;">-</a>
+            <a  class="btn btn-default active"  id = "Kolslog_tablo" onclick = "Kolslog_10();return false;" >4</a>
+            <a  class="btn btn-default" onclick = "Kolslog_plus();return false;">+</a>
+        </div> 
+      </div>
+      		<div class="panel-body" style=" text-align:center"> <h4>Интервал</h4>
+				<div class="btn-group btn-group-justified">	
+				    <a  class="btn btn-default" onclick = "skorost_minus();return false;">-</a>
+				    <a  class="btn btn-default active" id="Skorost_tablo" onclick = "skorost_1();return false;">1</a>
+				    <a  class="btn btn-default" onclick = "skorost_plus();return false;">+</a>
+				</div> 
+			</div>	
+				
+				
+				<div class="panel-body " style=" text-align:center; ">	<h4>Шрифт</h4>	
+						<div class="form-group">
+					      <div class="col-lg-12">
+					        <select class="form-control" id="select" onchange = "changefont()">
+					          <option >Source Sans Pro</option>
+					          <option >Showcard Gothic</option>
+					          <option>Jokerman</option>
+					          <option>DFPOP1-W9</option>
+					          <option>Playbill</option>
+					        </select>
+					      </div>
+					    </div>
+				</div>
+				
+			</div>
+
+      <div class="modal-footer">
+        <div class="panel-body">
+          <div class="panel-body">
+        <!-- <button type="button" class="btn btn-success" data-dismiss="modal">Применить</button>      -->
+        </div>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-top black_style9" style = "z-index: 2; height: 52" >
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button  type="button" class="navbar-toggle collapsed " data-toggle="collapse" onclick= "button_nastroyki_f(); return false;">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a tabindex = "-1" class="navbar-brand" href="/games" style = "width: 110px; background:url(/static/custom/css/s5_logo.png); background-position: center center; background-repeat: no-repeat; background-size: contain  "></a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav ">
+        <li class="dropdown ">
+          <a tabindex = "-1" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Модуль <span id = "navbar_modul" style = "font-size:12">(просто) </span></a>
+          <ul class="dropdown-menu black_style9" role="menu">
+            <li><a href="" onclick = "button_prosto_f(); return false;">Простое</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "button_brat_f();   return false;">Помощь брата</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "button_drug_f();  return false;">Помощь друга</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "button_combo_f();   return false;">Комбинированный счет</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "button_random_f();   return false;">Произвольный счет</a></li>
+          </ul>
+        </li>
+
+         <li class="dropdown">
+          <a tabindex = "-1" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Операции <span id = 'navbar_operation' style = "font-size:12">(+/-) </span></a>
+          <ul class="dropdown-menu black_style9" role="menu">
+            <li><a href="" onclick = "operation_plus();  return false;" >Сложение</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "operation_minus();  return false;" >Вычитание</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "operation_plus_minus();  return false;">Сложение-вычитание</a></li>
+          </ul>
+        </li>
+
+ 		<li class="dropdown">
+          <a tabindex = "-1" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Сложность <span id = 'navbar_slojnost'style = "font-size:12">(1)</span></a>
+          <ul class="dropdown-menu black_style9" role="menu">
+            <li><a href="" onclick = "Kolcifr_1();  return false;" >1</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "Kolcifr_2();  return false;">10</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "Kolcifr_3();  return false;" >100</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "Kolcifr_4();  return false;">1000</a></li>
+          </ul>
+        </li>
+
+
+        
+        <li tabindex = "-1" class="dropdown">
+          <a tabindex = "-1" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Кол-во слагаемых <span id = 'navbar_Kolslog' style = "font-size:12">(4)</span></a>
+          <ul class="dropdown-menu black_style9" role="menu">
+          	<li><a href="" onclick = "Kolslog_10();  return false;" >Ввод</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(2)'; document.getElementById('Kolslog_tablo').innerHTML = 2; return false;">2</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(3)'; document.getElementById('Kolslog_tablo').innerHTML = 3; return false;">3</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(4)'; document.getElementById('Kolslog_tablo').innerHTML = 4; return false;">4</a></li>
+             <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(5)'; document.getElementById('Kolslog_tablo').innerHTML = 5; return false;">5</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(6)'; document.getElementById('Kolslog_tablo').innerHTML = 6; return false;" >6</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(7)'; document.getElementById('Kolslog_tablo').innerHTML = 7; return false;">7</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(8)'; document.getElementById('Kolslog_tablo').innerHTML = 8; return false;">8</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(9)'; document.getElementById('Kolslog_tablo').innerHTML = 9; return false;">9</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('navbar_Kolslog').innerHTML = '(10)'; document.getElementById('Kolslog_tablo').innerHTML = 10; return false;">10</a></li>
+          </ul>
+          </li>
+          <li class="dropdown">
+          <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Интервал <span id = 'navbar_interval' style = "font-size:12">(1 сек)</span></a>
+          <ul class="dropdown-menu black_style9" role="menu">
+          	<li><a href="" onclick = "skorost_1();  return false;" >Ввод</a></li>
+            <li class="divider"></li>
+             <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 0.3; document.getElementById('navbar_interval').innerHTML = '(0.3 сек)';  return false;" >0.3 сек</a></li>
+            <li class="divider"></li>
+             <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 0.5; document.getElementById('navbar_interval').innerHTML = '(0.5 сек)';  return false;" >0.5 сек</a></li>
+            <li class="divider"></li>
+             <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 0.7; document.getElementById('navbar_interval').innerHTML = '(0.7 сек)';  return false;" >0.7 сек</a></li>
+            <li class="divider"></li>
+             <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 1; document.getElementById('navbar_interval').innerHTML = '(1 сек)';  return false;" >1 сек</a></li>
+            <li class="divider"></li>
+             <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 1.5; document.getElementById('navbar_interval').innerHTML = '(1.5 сек)';  return false;" >1.5 сек</a></li>
+            <li class="divider"></li>
+             <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 2; document.getElementById('navbar_interval').innerHTML = '(2 сек)';  return false;" >2 сек</a></li>
+            <li class="divider"></li>
+             <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 2.5; document.getElementById('navbar_interval').innerHTML = '(2.5 сек)';  return false;" >2.5 сек</a></li>
+            <li class="divider"></li>
+             <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 3; document.getElementById('navbar_interval').innerHTML = '(3 сек)';  return false;" >3 сек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 5; document.getElementById('navbar_interval').innerHTML = '(5 сек)';  return false;" >5 сек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 7; document.getElementById('navbar_interval').innerHTML = '(7 сек)';  return false;" >7 сек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 9; document.getElementById('navbar_interval').innerHTML = '(9 сек)';  return false;" >9 сек</a></li>
+          </ul>
+        </li>
+
+
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav" >
+            <div id = "navbar_pravilno_text" style=" text-align:center"> Правильно 0 из 0 (0) </div>
+            <div  class="progress progress-striped active black_style" style="margin-bottom:0; ">
+                  <div  id = "navbar_pravilno_progress" class="progress-bar progress-bar-success " style="width: 0"></div>
+            </div>
+      </ul>
+          <div class="btn-group">
+          <a onclick = "full_page(); return false;"  class="btn btn-default black_style" tabindex = "-1" style = "font-size: 25; height: 50; width:50">▢   </a>
+          <a onclick = "change_background(); return false;"  class="btn btn-default black_style" tabindex = "-1" style = "font-size: 25; height: 50; width:50">☻   </a>
+          <a  tabindex = "-1" id = "button_restart" class="btn btn-default black_style" onclick = "restart(); return false;" style = "font-size: 25; height: 50; width:50">♻</a>
+      		<a  tabindex = "-1" id = "button_start" class="btn btn-default black_style"  onclick = "start_2(); return false;" style = "font-size: 25; height: 50; width:50">►</a>
+      		<a  tabindex = "-1" id = "button_nastroyki" class="btn btn-default black_style" onclick = "button_nastroyki_f(); return false;"style = "font-size: 25; height: 50; width:50; ">&#9776</a>
+          </div>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container"  >
+<div  class="row">
+	<div id = "window_pusto_left" class="col-lg-3  col-md-3 col-sm-2 hidden-xs">  
+		</div>
+<div id = "window_zadaniye" class="col-lg-6  col-md-6 col-sm-8 col-xs-12" > 
+<div id = "window_otvet" class="panel panel-primary " style = "border:0; opacity: 0.9; margin-bottom:0;" >
+      <div class="panel-heading">
+          <h3  class="panel-title" style=" text-align:center; "></h3>
+      </div>
+    </div>  
+  <textarea onclick =  "if (document.body.clientWidth < 600 || this.value == '►' ) start_2(); return false;" class="form-control " id="Editbox_ekran" type="number" value="►" style=" background-color: black;
+        opacity: 0.8;
+        border-width:0; 
+        color: white;font-size:200; text-align:  center; height:310px; resize:none; overflow: hidden; " readonly autofocus> </textarea>
+
+<div class=" hidden-lg hidden-md hidden-sm col-xs-12" style = "opacity:0.9" >
+        <div class="btn-group btn-group-justified"> 
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 1; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">1</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 2; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">2</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 3; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">3</a>
+         </div> 
+         <div class="btn-group btn-group-justified"> 
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 4; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">4</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 5; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">5</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 6; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">6</a>
+         </div> 
+         <div class="btn-group btn-group-justified"> 
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 7; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">7</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 8; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">8</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 9; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">9</a>
+         </div> 
+          <div class="btn-group btn-group-justified"> 
+            <a id = "button_calc_start" onclick = "start_2(); return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">►</a>
+            <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value += 0; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">0</a>
+            <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_ekran.value = ( Editbox_ekran.value < 10 ? '' : parseInt(Editbox_ekran.value/10)); return false;" class="btn btn-default" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">←</a>
+          </div>
+	    </div>	
+      
+      
+
+
+</div>
+</div>		
+</div> 
+
+<script>
+function changefont(){
+	switch(document.getElementById('select').selectedIndex){
+		case 0:
+			Editbox_ekran.style.fontFamily = 'Source Sans Pro';
+		break;
+		case 1:
+			Editbox_ekran.style.fontFamily = 'Showcard Gothic';
+		break;
+		case 2:
+			Editbox_ekran.style.fontFamily = 'Jokerman';
+		break;
+		case 3:
+			Editbox_ekran.style.fontFamily = 'DFPOP1-W9';
+		break;
+		case 4:
+			Editbox_ekran.style.fontFamily = 'Playbill';
+		break;
+	}
+}
+
+</script>
+<script src = "/static/custom/js/Menar-mental-cw.js">
+</script>
+    <script src="/static/js/jquery-1.10.2.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/custom.js"></script>
+	 
+</body>
+
+</html>
+{% endblock %}

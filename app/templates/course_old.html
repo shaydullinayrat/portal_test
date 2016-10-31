@@ -1,0 +1,1269 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+  function primenit(){
+    $('#vvod_uroven').val($('#Level_tablo').html());
+    $('#vvod_operation').val($('#Operation_tablo').html())
+    $('#vvod_zad').val($('#Kolprim_tablo').html())
+    $('#vvod_kolslog').val($('#Kolslog_tablo').html())
+    $('#vvod_skorost').val($('#Skorost_tablo').html())
+    $('#vvod_kolcifr').val($('#Kolcifr_tablo').html())
+    $('#vvod_checked_cifr').val(whatchecked());
+    $('#vvod_half').val(half);
+  }
+  var half = true;
+function button_half_f(){
+	if ( Button_half.classList.contains('active') ){
+		Button_half.classList.remove('active');
+		half = false;
+	}
+	else{
+		Button_half.classList.add('active');
+		half = true;
+	}
+	primenit();
+}
+ function whatchecked(){
+	var arr=[];
+			arr.push(0);
+	 		if (button_1.classList.contains('active')) arr.push(1);
+	 		if (button_2.classList.contains('active')) arr.push(2);
+	 		if (button_3.classList.contains('active')) arr.push(3);
+	 		if (button_4.classList.contains('active')) arr.push(4);
+	 		if (button_5.classList.contains('active')) arr.push(5);
+	 		if (button_6.classList.contains('active')) arr.push(6);
+	 		if (button_7.classList.contains('active')) arr.push(7);
+	 		if (button_8.classList.contains('active')) arr.push(8);
+	 		if (button_9.classList.contains('active')) arr.push(9);
+	 		if (arr.length == 1) arr.push(1);
+	return arr;
+}
+
+function skorost_1(){
+	var t = Math.abs(parseFloat(prompt("Введите интервал времени задержки в пределах 0.001 до 10 сек")));
+	if (isNaN(t) || t <= 0) document.getElementById('Skorost_tablo').innerHTML = 1;
+	else{
+		document.getElementById('Skorost_tablo').innerHTML = t;
+	}
+	primenit();
+}
+
+function skorost_plus(){
+	var i = document.getElementById('Skorost_tablo').innerHTML;
+	i = parseInt(i*10)/10;
+	if (i > 0 && i <= 0.1) {
+		i += 0.01;
+		if (i <= 0) document.getElementById('Skorost_tablo').innerHTML = 0.01;
+		else document.getElementById('Skorost_tablo').innerHTML = i.toFixed(1);
+	}
+	if (i >= 0 && i < 1) {
+		i += 0.1;
+		 document.getElementById('Skorost_tablo').innerHTML = i.toFixed(1);
+	}
+	else if (i >= 1 && i < 2) {
+		i+=0.2;
+		document.getElementById('Skorost_tablo').innerHTML  = i.toFixed(1);
+	}
+	else if (i >= 2 && i < 5) {
+		i+=0.5;
+		document.getElementById('Skorost_tablo').innerHTML  = i.toFixed(1);
+	}
+
+	else {
+		i+=1;
+		document.getElementById('Skorost_tablo').innerHTML  = i;
+	}
+	primenit();
+}
+
+function skorost_minus(){
+	var i = document.getElementById('Skorost_tablo').innerHTML;
+	if (i > 0 && i <= 0.1) {
+		i -= 0.01;
+		if (i <= 0) document.getElementById('Skorost_tablo').innerHTML = 0.01;
+		else document.getElementById('Skorost_tablo').innerHTML = i.toFixed(1);
+	}
+	if (i > 0.1 && i <= 1) {
+		i -= 0.1;
+		if (i <= 0) document.getElementById('Skorost_tablo').innerHTML = 0.01;
+		else document.getElementById('Skorost_tablo').innerHTML = i.toFixed(1);
+	}
+	else if (i > 1 && i <= 2) {
+		i -= 0.2;
+		document.getElementById('Skorost_tablo').innerHTML  = i.toFixed(1);
+	}
+	else if (i > 2 && i <= 5) {
+		i -= 0.5;
+		document.getElementById('Skorost_tablo').innerHTML  = i.toFixed(1);
+	}
+
+	else {
+		i -= 1;
+		document.getElementById('Skorost_tablo').innerHTML  = i;
+	}
+	primenit();
+}
+
+	function kolslog_plus(){
+	 	if (document.getElementById('Kolslog_tablo').innerHTML < 50) ++document.getElementById('Kolslog_tablo').innerHTML;
+	}
+
+	function kolslog_minus(){
+		if (document.getElementById('Kolslog_tablo').innerHTML > 2) --document.getElementById('Kolslog_tablo').innerHTML;
+	}
+
+	function kolslog_10(){
+		var t = Math.abs(parseFloat(prompt("Введите количество чисел в интервале 2 до 50")));
+		if (isNaN(t) || t < 2 || t > 50) document.getElementById('Kolslog_tablo').innerHTML = 10;
+		else{
+			t = parseInt(t);
+			document.getElementById('Kolslog_tablo').innerHTML = t;
+		}
+		primenit();
+	}
+
+function primer_enter(){
+
+	var t = Math.abs(parseFloat(prompt("Введите количество примеров от 1 до 50")));
+	if (isNaN(t) || t > 50 || t < 1) {
+		document.getElementById('Kolprim_tablo').innerHTML = 10;
+	}
+	else{
+		document.getElementById('Kolprim_tablo').innerHTML = parseInt(t);
+	}
+	primenit();
+
+}
+
+function kolprim_plus(){
+	 	if (document.getElementById('Kolprim_tablo').innerHTML < 50){
+	 	 	++document.getElementById('Kolprim_tablo').innerHTML;
+	 	}
+	}
+
+	function kolprim_minus(){
+		if (document.getElementById('Kolprim_tablo').innerHTML > 1){
+			--document.getElementById('Kolprim_tablo').innerHTML;
+	 	}
+	 	primenit();
+	}
+
+
+function kolcifr_1() {
+
+	Button_Kolcifr_1.classList.add('active');
+	Button_Kolcifr_2.classList.remove('active');
+	Button_Kolcifr_3.classList.remove('active');
+	Button_Kolcifr_4.classList.remove('active');
+	document.getElementById('Kolcifr_tablo').innerHTML = 1;
+	primenit();
+}
+
+function kolcifr_2() {
+	Button_Kolcifr_1.classList.remove('active');
+	Button_Kolcifr_2.classList.add('active');
+	Button_Kolcifr_3.classList.remove('active');
+	Button_Kolcifr_4.classList.remove('active');
+	document.getElementById('Kolcifr_tablo').innerHTML = 2;
+	primenit();
+}
+
+function kolcifr_3() {
+	Button_Kolcifr_1.classList.remove('active');
+	Button_Kolcifr_2.classList.remove('active');
+	Button_Kolcifr_3.classList.add('active');
+	Button_Kolcifr_4.classList.remove('active');
+	document.getElementById('Kolcifr_tablo').innerHTML = 3;
+	primenit();
+}
+
+function kolcifr_4() {
+	Button_Kolcifr_1.classList.remove('active');
+	Button_Kolcifr_2.classList.remove('active');
+	Button_Kolcifr_3.classList.remove('active');
+	Button_Kolcifr_4.classList.add('active');
+	document.getElementById('Kolcifr_tablo').innerHTML = 4;
+	primenit();
+}
+
+
+
+function operation_plus() {
+	Button_operation_plus.classList.add('active');
+	Button_operation_minus.classList.remove('active');
+	Button_operation_plus_minus.classList.remove('active');
+	document.getElementById('Operation_tablo').innerHTML = 0;
+	primenit();
+}
+
+function operation_minus() {
+	Button_operation_plus.classList.remove('active');
+	Button_operation_minus.classList.add('active');
+	Button_operation_plus_minus.classList.remove('active');
+	document.getElementById('Operation_tablo').innerHTML = 1;
+	primenit();
+}
+
+function operation_plus_minus() {
+	Button_operation_plus.classList.remove('active');
+	Button_operation_minus.classList.remove('active');
+	Button_operation_plus_minus.classList.add('active');
+	document.getElementById('Operation_tablo').innerHTML = 2;
+	primenit();
+}
+
+
+
+ // Кнопка выбора всех видов слагаемых
+	function check_5(){
+		if (button_prosto.classList.contains('active')){
+			if (button_5.classList.contains('active')){
+				button_5.classList.remove('active');
+				button_6.classList.remove('active');
+				button_7.classList.remove('active');
+				button_8.classList.remove('active');
+				button_9.classList.remove('active');
+			}
+			else{
+				button_5.classList.add('active');
+			}
+		}
+		else{
+			if (button_5.classList.contains('active')){
+				button_5.classList.remove('active');
+			}
+			else{
+				button_5.classList.add('active')
+			}
+		}
+		primenit();
+	}
+
+	function check_6(){
+		if (button_prosto.classList.contains('active')){
+			if (button_6.classList.contains('active')){
+				button_6.classList.remove('active');
+				button_7.classList.remove('active');
+				button_8.classList.remove('active');
+				button_9.classList.remove('active');
+			}
+			else{
+				button_5.classList.add('active');
+				button_6.classList.add('active');
+			}
+		}
+		else{
+			if (button_6.classList.contains('active')){
+				button_6.classList.remove('active');
+			}
+			else{
+				button_6.classList.add('active')
+			}
+		}
+		primenit();
+	}
+
+	function check_1(){
+		if (!button_drug.classList.contains('active')){
+			if (button_1.classList.contains('active')) button_1.classList.remove('active')
+			else button_1.className =  "btn btn-default active";
+		}
+	}
+
+	function check_7(){
+		if (button_prosto.classList.contains('active')){
+			if (button_7.classList.contains('active')){
+				button_7.classList.remove('active');
+				button_8.classList.remove('active');
+				button_9.classList.remove('active');
+			}
+			else{
+				button_5.classList.add('active');
+				button_6.classList.add('active');
+				button_7.classList.add('active');
+			}
+		}
+		else{
+			if (button_7.classList.contains('active')){
+				button_7.classList.remove('active');
+			}
+			else{
+				button_7.classList.add('active')
+			}
+		}
+		primenit();
+	}
+
+	function check_8(){
+		if (button_prosto.classList.contains('active')){
+			if (button_8.classList.contains('active')){
+				button_8.classList.remove('active');
+				button_9.classList.remove('active');
+			}
+			else{
+				button_5.classList.add('active');
+				button_6.classList.add('active');
+				button_7.classList.add('active');
+				button_8.classList.add('active');
+			}
+		}
+		else{
+			if (button_8.classList.contains('active')){
+				button_8.classList.remove('active');
+			}
+			else{
+				button_8.classList.add('active')
+			}
+		}
+		primenit();
+	}
+
+	function check_9(){
+		if (button_prosto.classList.contains('active')){
+			if (button_9.classList.contains('active')){
+				button_9.classList.remove('active');
+			}
+			else{
+				button_5.classList.add('active');
+				button_6.classList.add('active');
+				button_7.classList.add('active');
+				button_8.classList.add('active');
+				button_9.classList.add('active');
+			}
+		}
+		else{
+			if (button_9.classList.contains('active')){
+				button_9.classList.remove('active');
+			}
+			else{
+				button_9.classList.add('active')
+			}
+		}
+		primenit();
+	}
+	function check_all(){
+		if (!button_check_all.classList.contains('active')){
+		button_check_all.classList.add('active');
+		if (!button_1.classList.contains('active')) button_1.classList.add('active');
+		if (!button_2.classList.contains('active')) button_2.classList.add('active');
+		if (!button_3.classList.contains('active')) button_3.classList.add('active');
+		if (!button_4.classList.contains('active')) button_4.classList.add('active');
+		if (!button_5.classList.contains('active')) button_5.classList.add('active');
+		if (!button_6.classList.contains('active')) button_6.classList.add('active');
+		if (!button_7.classList.contains('active')) button_7.classList.add('active');
+		if (!button_8.classList.contains('active')) button_8.classList.add('active');
+		if (!button_9.classList.contains('active')) button_9.classList.add('active');
+	}
+	else{
+		button_check_all.classList.remove('active');
+		if (button_1.classList.contains('active') && !button_1.classList.contains('hidden')) button_1.classList.remove('active');
+		if (button_2.classList.contains('active') && !button_2.classList.contains('hidden')) button_2.classList.remove('active');
+		if (button_3.classList.contains('active') && !button_3.classList.contains('hidden')) button_3.classList.remove('active');
+		if (button_4.classList.contains('active') && !button_4.classList.contains('hidden')) button_4.classList.remove('active');
+		if (button_5.classList.contains('active') && !button_5.classList.contains('hidden')) button_5.classList.remove('active');
+		if (button_6.classList.contains('active') && !button_6.classList.contains('hidden')) button_6.classList.remove('active');
+		if (button_7.classList.contains('active') && !button_7.classList.contains('hidden')) button_7.classList.remove('active');
+		if (button_8.classList.contains('active') && !button_8.classList.contains('hidden')) button_8.classList.remove('active');
+		if (button_9.classList.contains('active') && !button_9.classList.contains('hidden')) button_9.classList.remove('active');
+	}
+	primenit();
+	}
+
+
+
+	function button_prosto_f(){
+		if (button_prosto.classList.contains('active')){
+			check_all();
+		}
+		else{
+			button_6.classList.remove('hidden');
+			button_7.classList.remove('hidden');
+			button_8.classList.remove('hidden');
+			button_9.classList.remove('hidden');
+			document.getElementById('Level_tablo').innerHTML = 1;
+			button_prosto.classList.add('active');
+			button_brat.classList.remove('active');
+			button_drug.classList.remove('active');
+			button_combo.classList.remove('active');
+			button_random.classList.remove('active');
+
+			button_check_all.classList.add('active');
+			button_1.classList.add('active', 'hidden');
+			button_2.classList.add('active', 'hidden');
+			button_3.classList.add('active', 'hidden');
+			button_4.classList.add('active', 'hidden');
+			button_5.classList.add('active');
+			button_6.classList.add('active');
+			button_7.classList.add('active');
+			button_8.classList.add('active');
+			button_9.classList.add('active');
+		}
+		primenit();
+	}
+
+	function button_brat_f(){
+		if (button_brat.classList.contains('active')){
+			check_all();
+		}
+		else{
+		button_1.classList.remove('hidden');
+		button_2.classList.remove('hidden');
+		button_3.classList.remove('hidden');
+		button_4.classList.remove('hidden');
+		document.getElementById('Level_tablo').innerHTML = 2;
+		button_prosto.classList.remove('active');
+		button_brat.classList.add('active');
+		button_drug.classList.remove('active');
+		button_combo.classList.remove('active');
+		button_random.classList.remove('active');
+
+		button_check_all.classList.add('active');
+		button_1.classList.add('active');
+		button_2.classList.add('active');
+		button_3.classList.add('active');
+		button_4.classList.add('active');
+		button_5.classList.add('active', 'hidden');
+		button_6.classList.add('active', 'hidden');
+		button_7.classList.add('active', 'hidden');
+		button_8.classList.add('active', 'hidden');
+		button_9.classList.add('active', 'hidden');
+		}
+		primenit();
+	}
+
+	function button_drug_f(){
+		if (button_drug.classList.contains('active')){
+			check_all();
+		}
+		else{
+		button_1.classList.remove('hidden');
+		button_2.classList.remove('hidden');
+		button_3.classList.remove('hidden');
+		button_4.classList.remove('hidden');
+		button_5.classList.remove('hidden');
+		button_6.classList.remove('hidden');
+		button_7.classList.remove('hidden');
+		button_8.classList.remove('hidden');
+		button_9.classList.remove('hidden');
+		document.getElementById('Level_tablo').innerHTML = 3;
+		button_prosto.classList.remove('active');
+		button_brat.classList.remove('active');
+		button_drug.classList.add('active');
+		button_combo.classList.remove('active');
+		button_random.classList.remove('active');
+
+		button_check_all.classList.add('active');
+		button_1.classList.add('active');
+		button_2.classList.add('active');
+		button_3.classList.add('active');
+		button_4.classList.add('active');
+		button_5.classList.add('active');
+		button_6.classList.add('active');
+		button_7.classList.add('active');
+		button_8.classList.add('active');
+		button_9.classList.add('active');
+	}
+	primenit();
+	}
+
+	function button_combo_f(){
+		if (button_combo.classList.contains('active')){
+			check_all();
+		}
+		else{
+			button_6.classList.remove('hidden');
+			button_7.classList.remove('hidden');
+			button_8.classList.remove('hidden');
+			button_9.classList.remove('hidden');
+			document.getElementById('Level_tablo').innerHTML = 4;
+			button_prosto.classList.remove('active');
+			button_brat.classList.remove('active');
+			button_drug.classList.remove('active');
+			button_combo.classList.add('active');
+			button_random.classList.remove('active');
+
+			button_check_all.classList.add('active');
+			button_1.classList.add('active', 'hidden');
+			button_2.classList.add('active', 'hidden');
+			button_3.classList.add('active', 'hidden');
+			button_4.classList.add('active', 'hidden');
+			button_5.classList.add('active', 'hidden');
+			button_6.classList.add('active');
+			button_7.classList.add('active');
+			button_8.classList.add('active');
+			button_9.classList.add('active');
+		}
+		primenit();
+	}
+
+	function button_random_f(){
+		document.getElementById('Level_tablo').innerHTML = 5;
+		button_prosto.classList.remove('active');
+		button_brat.classList.remove('active');
+		button_drug.classList.remove('active');
+		button_combo.classList.remove('active');
+		button_random.classList.add('active');
+
+		button_check_all.classList.add('active');
+		button_1.classList.add('active', 'hidden');
+		button_2.classList.add('active', 'hidden');
+		button_3.classList.add('active', 'hidden');
+		button_4.classList.add('active', 'hidden');
+		button_5.classList.add('active', 'hidden');
+		button_6.classList.add('active', 'hidden');
+		button_7.classList.add('active', 'hidden');
+		button_8.classList.add('active', 'hidden');
+		button_9.classList.add('active', 'hidden');
+		primenit();
+	}
+
+function changeType(homework_id){
+  $.post('{{ url_for("get_homework") }}', {
+      // params, that will be send as 'POST'
+      homework_id: homework_id
+  }).done(function(data) {
+      // actions, that will be done after successfull response
+      if (data.res == 1){
+        if (data.title == 'Счет на скорость'){
+          menarargs = `
+      <div class="panel-body col-lg-8 col-md-8 col-sm-8 ">
+        <div class="panel-body " style=" text-align:center"> <h4>Модуль</h4>
+              <div class="btn-group btn-group-justified">
+            <a  id = "button_prosto" onclick = "button_prosto_f(); return false;" style = " text-transform:  none"  class="btn btn-default active" title="Простой счет">Просто</a>
+            <a  id = "button_brat" onclick = "button_brat_f(); return false;" class="btn btn-default" title="Помощь брата" style = " text-transform:  none">Брат</a>
+            <a  id = "button_drug" onclick = "button_drug_f(); return false;" class="btn btn-default" title="Помощь друга" style = " text-transform:  none">Друг</a>
+            <a  id = "Level_tablo" class="btn btn-default hidden" >1</a>
+            <a  id = "button_combo" onclick = "button_combo_f(); return false;" class="btn btn-default" title="Комбинированный счет" style = " text-transform:  none">Комбо</a>
+            <a  id = "button_random" onclick = "button_random_f(); return false;" class="btn btn-default" title="Счет по ступеням" style = " text-transform:  none">Ступ</a>
+        </div>
+          <div class="btn-group btn-group-justified">
+            <a  id = "button_1"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;" >1</a>
+            <a  id = "button_2"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">2</a>
+            <a  id = "button_3"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">3</a>
+            <a  id = "button_4"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">4</a>
+            <a  id = "button_5"  class="btn btn-default active" onclick = "check_5();return false;">5</a>
+            <a  id = "button_6"  class="btn btn-default active" onclick = "check_6();return false;">6</a>
+            <a  id = "button_7"  class="btn btn-default active" onclick = "check_7();return false;">7</a>
+            <a  id = "button_8"  class="btn btn-default active" onclick = "check_8();return false;">8</a>
+            <a  id = "button_9"  class="btn btn-default active" onclick = "check_9();return false;">9</a>
+          </div>
+          <div class="btn-group btn-group-justified">
+            <a  id = "button_check_all" class="btn btn-default active hidden" onclick = "check_all(); return false;">Выбрать все</a>
+          </div>
+      </div>
+      <div  class="panel-body" style=" text-align:center"> <h4>Сложность</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default active" id = "Button_Kolcifr_1" onclick = "kolcifr_1();return false;">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_2" onclick = "kolcifr_2();return false;">10</a>
+            <a  class="btn btn-default hidden "  id = "Kolcifr_tablo">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_3" onclick = "kolcifr_3();return false;">100</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_4" onclick = "kolcifr_4();return false;">1000</a>
+            <a  class="btn btn-default active" id = "Button_half" onclick = "button_half_f();return false;">1/2</a>
+        </div>
+      </div>
+      <div  class="panel-body" style=" text-align:center"> <h4>Операции</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" id = "Button_operation_plus" title="Сложение" onclick = "operation_plus();return false;" >+</a>
+            <a  class="btn btn-default hidden" id = "Operation_tablo" >2</a>
+            <a  class="btn btn-default" id = "Button_operation_minus" title="Вычитание" onclick = "operation_minus();return false;">-</a>
+            <a  class="btn btn-default active" id = "Button_operation_plus_minus" title="Сложение+Вычитание" onclick = "operation_plus_minus();return false;">+/-</a>
+        </div>
+      </div>
+
+    </div>
+
+      <div class="panel-body col-lg-4 col-md-4 col-sm-4">
+
+      <div class="panel-body" style="  text-align:center"> <h4> Количество слагаемых </h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default " onclick = "kolslog_minus();return false;">-</a>
+            <a  class="btn btn-default active"  id = "Kolslog_tablo" onclick = "kolslog_10();return false;" >4</a>
+            <a  class="btn btn-default" onclick = "kolslog_plus();return false;">+</a>
+        </div>
+      </div>
+      <div class="panel-body" style=" text-align:center"> <h4>Количество        примеров</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "kolprim_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Kolprim_tablo" onclick = "primer_enter();return false;">6</a>
+            <a  class="btn btn-default" onclick = "kolprim_plus();return false;">+</a>
+        </div>
+      </div>
+      <div class="panel-body" style=" text-align:center"> <h4>Интервал</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "skorost_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Skorost_tablo" onclick = "skorost_1();return false;">1</a>
+            <a  class="btn btn-default" onclick = "skorost_plus();return false;">+</a>
+        </div>
+      </div>
+    </div>`
+    $('#modal_args_field').html(menarargs)
+          for (item in data.args){
+            input = '<input id="' + data.args[item] + '" name="' + data.args[item] + '" type="hidden">'
+            $('#modal_args_field').html($('#modal_args_field').html()+input)
+          }
+	}
+    else if (data.title == 'Столбцы'){
+          menarargs = `
+      <div class="panel-body col-lg-8 col-md-8 col-sm-8 ">
+        <div class="panel-body " style=" text-align:center"> <h4>Модуль</h4>
+              <div class="btn-group btn-group-justified">
+            <a  id = "button_prosto" onclick = "button_prosto_f(); return false;" style = " text-transform:  none"  class="btn btn-default active" title="Простой счет">Просто</a>
+            <a  id = "button_brat" onclick = "button_brat_f(); return false;" class="btn btn-default" title="Помощь брата" style = " text-transform:  none">Брат</a>
+            <a  id = "button_drug" onclick = "button_drug_f(); return false;" class="btn btn-default" title="Помощь друга" style = " text-transform:  none">Друг</a>
+            <a  id = "Level_tablo" class="btn btn-default hidden" >1</a>
+            <a  id = "button_combo" onclick = "button_combo_f(); return false;" class="btn btn-default" title="Комбинированный счет" style = " text-transform:  none">Комбо</a>
+            <a  id = "button_random" onclick = "button_random_f(); return false;" class="btn btn-default" title="Счет по ступеням" style = " text-transform:  none">Ступ</a>
+        </div>
+          <div class="btn-group btn-group-justified">
+            <a  id = "button_1"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;" >1</a>
+            <a  id = "button_2"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">2</a>
+            <a  id = "button_3"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">3</a>
+            <a  id = "button_4"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">4</a>
+            <a  id = "button_5"  class="btn btn-default active" onclick = "check_5();return false;">5</a>
+            <a  id = "button_6"  class="btn btn-default active" onclick = "check_6();return false;">6</a>
+            <a  id = "button_7"  class="btn btn-default active" onclick = "check_7();return false;">7</a>
+            <a  id = "button_8"  class="btn btn-default active" onclick = "check_8();return false;">8</a>
+            <a  id = "button_9"  class="btn btn-default active" onclick = "check_9();return false;">9</a>
+          </div>
+          <div class="btn-group btn-group-justified">
+            <a  id = "button_check_all" class="btn btn-default active hidden" onclick = "check_all(); return false;">Выбрать все</a>
+          </div>
+      </div>
+      <div  class="panel-body" style=" text-align:center"> <h4>Сложность</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default active" id = "Button_Kolcifr_1" onclick = "kolcifr_1();return false;">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_2" onclick = "kolcifr_2();return false;">10</a>
+            <a  class="btn btn-default hidden "  id = "Kolcifr_tablo">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_3" onclick = "kolcifr_3();return false;">100</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_4" onclick = "kolcifr_4();return false;">1000</a>
+            <a  class="btn btn-default active" id = "Button_half" onclick = "button_half_f();return false;">1/2</a>
+        </div>
+      </div>
+      <div  class="panel-body" style=" text-align:center"> <h4>Операции</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" id = "Button_operation_plus" title="Сложение" onclick = "operation_plus();return false;" >+</a>
+            <a  class="btn btn-default hidden" id = "Operation_tablo" >2</a>
+            <a  class="btn btn-default" id = "Button_operation_minus" title="Вычитание" onclick = "operation_minus();return false;">-</a>
+            <a  class="btn btn-default active" id = "Button_operation_plus_minus" title="Сложение+Вычитание" onclick = "operation_plus_minus();return false;">+/-</a>
+        </div>
+      </div>
+
+    </div>
+
+      <div class="panel-body col-lg-4 col-md-4 col-sm-4">
+
+      <div class="panel-body" style="  text-align:center"> <h4> Количество слагаемых </h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default " onclick = "kolslog_minus();return false;">-</a>
+            <a  class="btn btn-default active"  id = "Kolslog_tablo" onclick = "kolslog_10();return false;" >4</a>
+            <a  class="btn btn-default" onclick = "kolslog_plus();return false;">+</a>
+        </div>
+      </div>
+      <div class="panel-body" style=" text-align:center"> <h4>Количество        примеров</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "kolprim_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Kolprim_tablo" onclick = "primer_enter();return false;">6</a>
+            <a  class="btn btn-default" onclick = "kolprim_plus();return false;">+</a>
+        </div>
+      </div>
+    </div>`
+    $('#modal_args_field').html(menarargs)
+          for (item in data.args){
+            input = '<input id="' + data.args[item] + '" name="' + data.args[item] + '" type="hidden">'
+            $('#modal_args_field').html($('#modal_args_field').html()+input)
+          }
+	}
+    else if (data.title == 'Флэш-карты'){
+          menarargs = `
+      <div class="panel-body col-lg-7 col-md-7 col-sm-7">
+      <div  class="panel-body" style=" text-align:center"> <h4>Сложность</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default active" id = "Button_Kolcifr_1" onclick = "kolcifr_1();return false;">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_2" onclick = "kolcifr_2();return false;">10</a>
+            <a  class="btn btn-default hidden "  id = "Kolcifr_tablo">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_3" onclick = "kolcifr_3();return false;">100</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_4" onclick = "kolcifr_4();return false;">1000</a>
+        </div>
+      </div>
+     </div>
+     <div class="panel-body col-lg-5 col-md-5 col-sm-5">
+      <div class="panel-body" style=" text-align:center"> <h4>Количество        примеров</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "kolprim_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Kolprim_tablo" onclick = "primer_enter();return false;">6</a>
+            <a  class="btn btn-default" onclick = "kolprim_plus();return false;">+</a>
+        </div>
+      </div>
+      <div class="panel-body" style=" text-align:center"> <h4>Интервал</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "skorost_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Skorost_tablo" onclick = "skorost_1();return false;">1</a>
+            <a  class="btn btn-default" onclick = "skorost_plus();return false;">+</a>
+        </div>
+      </div>
+      </div>`
+          $('#modal_args_field').html(menarargs)
+          for (item in data.args){
+            input = '<input id="' + data.args[item] + '" name="' + data.args[item] + '" type="hidden">'
+            $('#modal_args_field').html($('#modal_args_field').html()+input)
+          }
+
+        }else{
+          $('#modal_args_field').html('')
+          for (item in data.args){
+            input = '<br/><div class="form-group">'+
+                      '<label for="inputEmail" class="col-lg-3 control-label">' + data.args[item] + '</label>' +
+                      '<div class="col-lg-9">' +
+                        '<input class="form-control" name="' + data.args[item] +'" placeholder="' + data.args[item] +
+                        '" type="text"></div></div>'
+            $('#modal_args_field').html($('#modal_args_field').html()+input)
+          }
+        }
+
+        $('#homework_modal').modal('show');
+      }
+  }).fail(function() {
+    // actions, that will be done after UNsuccessfull response
+    alert('error')
+  });
+}
+function deleteCourseStudent(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_student_course_cost") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+
+function more_course(id, student_id, cost, comment){
+    $('#modal_id').val(id);
+    $('#modal_student_id').val(student_id);
+    if (student_id != ''){
+      $('#modal_student_id_field').hide()
+    }else{
+      $('#modal_student_id_field').show()
+    }
+    $('#modal_cost').val(cost);
+    $('#modal_cost_comment').val(comment);
+    $('#modal').modal('show');
+}
+
+function cancelLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('cancel_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).addClass('warning')
+            status_com = '#lesson_status_' + id
+            $(status_com).html('Отменен')
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+function deleteLesson(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('delete_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+function deleteTimesheet(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_timesheet") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#timesheet' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+
+function more(id, place, dow, hod, moh, hoe, moe){
+    $('#modal_timesheet_id').val(id);
+    $('#modal_place').val(place);
+    $('#modal_dow').val(dow);
+    $('#modal_hod').val(hod);
+    $('#modal_moh').val(moh);
+    $('#modal_hoe').val(hoe);
+    $('#modal_moe').val(moe);
+    $('#time_modal').modal('show');
+}
+function more_abstract(lesson_id){
+  $.post('{{ url_for("get_lesson_text") }}', {
+      lesson_id: lesson_id
+  }).done(function(data) {
+      if (data.res == 1){
+        $('#modal_abstract_lesson_id').val(lesson_id)
+        $('#modal_lesson_title').val(data.title)
+        $('#modal_text').html(data.text)
+        $('#abstract_modal').modal('show');
+      }
+  }).fail(function() {
+    alert('error')
+  });
+}
+function more_homework(lesson_id){
+    $('#modal_lesson_id').val(lesson_id);
+    changeType($('#homework_id').val());
+    // $('#homework_modal').modal('show');
+}
+</script>
+<div class="row">
+    <h4 class="col-lg-6"><b>Курс: </b>{{ course.title }}</h4>
+    <h4 class="col-lg-6"><b>Преподаватель: </b>{{ course.teacher.fio }}</h4>
+  <h5 class="col-lg-12"> с {{ course.start_date.strftime('%d.%m.%Y') }} по {{ course.end_date.strftime('%d.%m.%Y') }}</h5>
+  {% if user.teacher %}
+      <div class="col-lg-6">
+        <h4><b>Расписание занятий</b></h4>
+        <table class="table table-striped table-hover panel panel-primary">
+          <thead class="panel-heading">
+            <tr>
+              <th class="col-lg-6">Время</th>
+              <th class="col-lg-6">Место</th>
+            </tr>
+          </thead>
+          <tbody class="panel-body">
+            {% if timesheets|length == 0%}
+                <tr><td colspan="2" align="center"><b>Не введено ни одно занятие!</b></td></tr>
+            {% endif %}
+            {% for timesheet in timesheets%}
+              <tr>
+                <td>{% if timesheet.dow == 0 %}
+                  Понедельник
+                {% elif timesheet.dow == 1 %}
+                  Вторник
+                {% elif timesheet.dow == 2 %}
+                  Среда
+                {% elif timesheet.dow == 3 %}
+                  Четверг
+                {% elif timesheet.dow == 4 %}
+                  Пятница
+                {% elif timesheet.dow == 5 %}
+                  Суббота
+                {% elif timesheet.dow == 6 %}
+                  Воскресенье
+                {% endif%}
+                {{ timesheet.hod }}:{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}
+                </td>
+                <td>{{ timesheet.place.title }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-lg-6">
+        <h4><b>Ученики</b></h4>
+        <table class="table table-striped table-hover panel panel-primary">
+          <thead class="panel-heading">
+            <tr>
+              <th class="col-lg-6">Ученик</th>
+              <th class="col-lg-6">Телефон</th>
+            </tr>
+          </thead>
+          <tbody class="panel-body">
+            {% if students|length == 0%}
+              <tr><td colspan="2" align="center"><b>Ни один ученик не записан на этот курс!</b></td></tr>
+            {% endif %}
+            {% for student in students%}
+              <tr>
+                <td><a href="{{ url_for('show_student_tasks_teacher', student_id= student.student.id) }}"> {{ student.student.fio }}</a></td>
+                <td>{{ student.student.phone }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  {% elif user.is_admin %}
+    
+    <h4><b>Расписание занятий</b>
+      <a class="btn btn-success" onclick="more('', '', '', '12', '00', '13', '00');"><b>+ ДОБАВИТЬ ЗАНЯТИЕ</b></a>      
+    </h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">Место</th>
+          <th class="col-lg-3">День недели</th>
+          <th class="col-lg-3">Время</th>
+          <th class="col-lg-3"></th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if timesheets|length == 0%}
+            <tr><td colspan="3" align="center"><b>Не введено ни одно занятие!</b></td></tr>
+        {% endif %}
+        {% for timesheet in timesheets %}
+        <tr id="timesheet{{ timesheet.id }}">
+          <td>{{ timesheet.place.title }}</td>
+          <td>{% if timesheet.dow == 0 %}
+                Понедельник
+              {% elif timesheet.dow == 1 %}
+                Вторник
+              {% elif timesheet.dow == 2 %}
+                Среда
+              {% elif timesheet.dow == 3 %}
+                Четверг
+              {% elif timesheet.dow == 4 %}
+                Пятница
+              {% elif timesheet.dow == 5 %}
+                Суббота
+              {% elif timesheet.dow == 6 %}
+                Воскресенье
+              {% endif%}
+          </td>
+          <td>{{ timesheet.hod }}:{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }} - {{ timesheet.hod + timesheet.hoe}}:{% if (timesheet.moh + timesheet.moe)|string|length != 2 %}0{% endif %}{{ timesheet.moh + timesheet.moe }}</td>
+          <td class="btn-group btn-group-justified">
+            <a class="btn btn-default" onclick="more('{{ timesheet.id }}', '{{ timesheet.place.id }}', '{{ timesheet.dow }}', '{{ timesheet.hod }}', '{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}', '{{ timesheet.hoe }}', '{% if timesheet.moe|string|length != 2 %}0{% endif %}{{ timesheet.moe }}');">Редактировать</a>
+            <a class="btn btn-danger" onclick="deleteTimesheet({{ timesheet.id }});">Удалить</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <h4><b>Ученики</b>
+      <a class="btn btn-success" onclick="more_course('', '', {{ course.student_cost }}, '');"><b> + ДОБАВИТЬ УЧЕНИКА</b></a>
+    </h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">ФИО</th>
+          <!-- <th class="col-lg-2">Логин</th> -->
+          <th class="col-lg-2">Телефон</th>
+          <th class="col-lg-2">Стоимость занятия</th>
+          <th class="col-lg-2">Комментарий</th>
+          <th class="col-lg-3"></th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if students|length == 0%}
+            <tr><td colspan="4" align="center"><b>Ни один ученик не записан на этот курс!</b></td></tr>
+        {% endif %}
+        {% for student in students%}
+        <tr id="{{ student.id }}">
+          <td><a href="{{ url_for('show_student', student_id=student.student.id) }}">{{ student.student.fio }}</a></td>
+          <!-- <td>{{ student.student.user.username }}</td> -->
+          <td>{{ student.student.phone }}</td>
+          <td>{{ student.cost }}</td>
+          <td>{{ student.comment }}</td>
+          <td class="btn-group btn-group-justified">
+            <a class="btn btn-default" onclick="more_course({{ student.id }}, {{ student.student.id }}, '{{ student.cost }}', '{{ student.comment }}');">Редактировать</a>
+            <a class="btn btn-danger" onclick="deleteCourseStudent({{ student.id }});">Удалить</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+    
+    <h4><b>Занятия</b></h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-4">Дата</th>	
+          <th class="col-lg-4">Тема</th>
+          <!-- <th class="col-lg-2">Состояние</th> -->
+          <th class="col-lg-4"></th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if lessons|length == 0%}
+            <tr><td colspan="4" align="center"><b>Нет ни одного занятия!</b></td></tr>
+        {% endif %}
+        {% for lesson in lessons%}
+        <tr id="{{ lesson.id }}"
+              {% if lesson.status == 1 %} class="success"
+              {% elif lesson.status == -1 %} class="warning"
+              {% endif%}>
+          <td>
+            {{ lesson.date.strftime('%d.%m.%Y') }}
+            {% if lesson.timesheet.dow == 0 %}
+              (Пн)
+            {% elif lesson.timesheet.dow == 1 %}
+              (Вт)
+            {% elif lesson.timesheet.dow == 2 %}
+              (Ср)
+            {% elif lesson.timesheet.dow == 3 %}
+              (Чт)
+            {% elif lesson.timesheet.dow == 4 %}
+              (Пт)
+            {% elif lesson.timesheet.dow == 5 %}
+              (Сб)
+            {% elif lesson.timesheet.dow == 6 %}
+              (Вск)
+            {% endif%}
+            {{ lesson.timesheet.hod}}:{% if lesson.timesheet.moh|string|length != 2 %}0{% endif %}{{ lesson.timesheet.moh }} - {{ lesson.timesheet.hod + lesson.timesheet.hoe}}:{% if (lesson.timesheet.moh + lesson.timesheet.moe)|string|length != 2 %}0{% endif %}{{ lesson.timesheet.moh + lesson.timesheet.moe }}
+          </td>
+          <td>{{ lesson.title if lesson.title else '<тема не указана>'}}</td>
+          
+          <!-- <td id="lesson_status_{{ lesson.id }}">{% if lesson.status == 0 %}
+                Еще не проведен
+              {% elif lesson.status == 1 %}
+                Проведен
+              {% elif lesson.status == -1 %}
+                Отменен
+              {% endif %}
+          </td> -->
+          <td>
+            {% if user.is_admin %}
+            <div class="btn-group btn-group-justified">
+              <a class="btn btn-primary" href="{{ url_for('show_lesson', lesson_id=lesson.id) }}">{% if lesson.status == 1 %}Подробнее{% else %}Начать{% endif %}</a>
+              {% if lesson.status != -1 %}<a class="btn btn-warning" onclick="cancelLesson({{ lesson.id }});">Отменить</a>{% endif %}
+              <a class="btn btn-danger" onclick="deleteLesson({{ lesson.id }});">Удалить</a>
+            </div>
+            {% elif user.teacher %}
+            <div class="btn-group btn-group-justified">
+              <a class="btn btn-primary" href="{{ url_for('show_lesson', lesson_id=lesson.id) }}">{% if lesson.status == 1 %}Подробнее{% else %}Начать{% endif %}</a>
+              {% if lesson.status != -1 %}<a class="btn btn-warning" onclick="cancelLesson({{ lesson.id }});">Отменить</a>{% endif %}
+            </div>
+            <div class="btn-group btn-group-justified">
+              <a class="btn btn-success" onclick="more_abstract({{ lesson.id }});">Тема</a>
+              <a class="btn btn-default" onclick="more_homework({{ lesson.id }});">ДЗ</a>
+            </div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<div class="modal" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Запись на курс</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_id" name="modal_id" value=""/>
+                    <div class="form-group" id="modal_student_id_field">
+                      <label for="inputEmail" class="col-lg-3 control-label">Ученик</label>
+                      <div class="col-lg-9">
+                        <select data-placeholder="Выберите ученика" id="modal_student_id" name="modal_student_id">
+                          <option></option>
+                          {% for student in all_students %}
+                          <option value="{{ student.id }}">{{ student.fio }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Стоимость занятия</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_cost" name="modal_cost" placeholder="Cost" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Комментарий</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_cost_comment" name="modal_cost_comment" placeholder="Комментарий" type="text">
+                      </div>
+                    </div>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal" id="time_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Новое занятие</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_timesheet_id" name="modal_timesheet_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Аудитория</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_place" name="modal_place">
+                          {% for place in places %}
+                            <option value="{{ place.id }}">{{ place.title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">День недели</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_dow" name="modal_dow">
+                          <option value="0">Понедельник</option>
+                          <option value="1">Вторник</option>
+                          <option value="2">Среда</option>
+                          <option value="3">Четверг</option>
+                          <option value="4">Пятница</option>
+                          <option value="5">Суббота</option>
+                          <option value="6">Воскресенье</option>
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Часы</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_hod" name="modal_hod" placeholder="Hour" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Минуты</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_moh" name="modal_moh" placeholder="Minutes" type="text">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Часы конец</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_hoe" name="modal_hoe" placeholder="Hour" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Минуты конец</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_moe" name="modal_moe" placeholder="Minutes" type="text">
+                      </div>
+                    </div>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal" id="homework_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Домашнее задание</h4>
+      </div>
+      <form action="" method="POST" onsubmit="primenit(); return true;">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_lesson_id" name="modal_lesson_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Тип</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="homework_id" name="homework_id" onchange="changeType($('#homework_id').val());">
+                          {% for homework in homeworks %}
+                          <option value="{{ homework.id }}">{{ homework.title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Название</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_title" name="modal_title" placeholder="Title" type="text">
+                      </div>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Ученики</label>
+                      <div class="col-lg-9">
+                        <select multiple="" style="height:100px;" class="form-control" id="student_ids" name="student_ids">
+                          {% for student in students %}
+                          <option value="{{ student.student.id }}" selected="">{{ student.student.fio }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <fieldset id="modal_args_field" class="col-lg-12">
+                    </fieldset>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Задать</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal" id="abstract_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Конспект занятия</h4>
+      </div>
+      <form action="" method="POST">
+        <input type="hidden" name="modal_abstract_lesson_id" id="modal_abstract_lesson_id">
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-2 control-label">Тема занятия</label>
+          <div class="col-lg-10">
+            <input class="form-control" id="modal_lesson_title" name="modal_title" placeholder="Тема" type="text">
+          </div>
+        </div>
+        
+        <div class="modal-body">
+          <fieldset>
+            <textarea class="form-control" id="modal_text" name="modal_text" rows="6"></textarea>
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

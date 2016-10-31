@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function cancelLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('cancel_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).addClass('danger')
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+function deleteLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    if (confirm('Вы уверены?')){
+      $.post('{{ url_for('delete_lesson') }}', {
+          // params, that will be send as 'POST'
+          id: id
+      }).done(function(data) {
+          // actions, that will be done after successfull response
+          if (data.res == 1){
+              com = '#' + id
+              $(com).hide()
+          }
+      }).fail(function() {
+          // actions, that will be done after UNsuccessfull response
+          alert('error')
+      });
+    }
+}
+</script>
+<div class="row" >
+   {% if user and user.is_admin%}
+    <h3><b>Занятия этой недели</b></h3>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        {% if user and user.is_admin%}
+        <tr>
+          <th class="col-lg-3">Курс</th>
+          <th class="col-lg-3">Преподаватель</th>
+          <th class="col-lg-1">Время</th>
+          <th class="col-lg-1">Аудитория</th>
+          <th class="col-lg-4"></th>
+        </tr>
+        {% elif user and user.teacher%}
+        <tr>
+          <th class="col-lg-4">Курс</th>
+          <th class="col-lg-2">Время</th>
+          <th class="col-lg-2">Аудитория</th>
+          <th class="col-lg-4"></th>
+        </tr>
+        {% endif%}
+      </thead>
+      <tbody class="panel-body">
+        <tr>
+          <form action="" method="POST">
+              <td>
+                <select class="form-control" id="course_id" name="course_id" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  {% for course in courses %}
+                  <option value="{{ course.id }}"
+                    {% if course.id|string == request.form.course_id|string %} selected="selected"{% endif %}>{{ course.title }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              {% if user and user.is_admin%}
+              <td>
+                <select class="form-control" id="teacher_id" name="teacher_id" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  {% for teacher in teachers %}
+                  <option value="{{ teacher.id }}"
+                    {% if teacher.id|string == request.form.teacher_id|string %} selected="selected"{% endif %}>{{ teacher.fio }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              {% endif %}
+              <td>
+                <select class="form-control" id="dow" name="dow" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  <option value="0" {% if request.form.dow == '0' %} selected="selected"{% endif %}>
+                  Понедельник</option>
+                  <option value="1" {% if request.form.dow == '1' %} selected="selected"{% endif %}>
+                  Вторник</option>
+                  <option value="2" {% if request.form.dow == '2' %} selected="selected"{% endif %}>
+                  Среда</option>
+                  <option value="3" {% if request.form.dow == '3' %} selected="selected"{% endif %}>
+                  Четверг</option>
+                  <option value="4" {% if request.form.dow == '4' %} selected="selected"{% endif %}>
+                  Пятница</option>
+                  <option value="5" {% if request.form.dow == '5' %} selected="selected"{% endif %}>
+                  Суббота</option>
+                  <option value="6" {% if request.form.dow == '6' %} selected="selected"{% endif %}>
+                  Воскресенье</option>
+                </select>
+              </td>
+               <td>
+                <select class="form-control" id="place" name="place" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  {% for place in places %}
+                    <option value="{{ place.id }}"{% if place.id|string == request.form.place|string %} selected="selected"{% endif %}>{{ place.title }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td >
+                
+                {% if user and user.is_admin%}
+                <button onclick = "document.getElementById('dow').options[0].selected=true; document.getElementById('teacher_id').options[0].selected=true; document.getElementById('course_id').options[0].selected=true; document.getElementById('place').options[0].selected=true;" type="submit" class="btn btn-primary btn-block">Удалить фильтры</button>
+                {% elif user and user.teacher%}
+                <button onclick = "document.getElementById('dow').options[0].selected=true; document.getElementById('course_id').options[0].selected=true; document.getElementById('place').options[0].selected=true;" type="submit" class="btn btn-primary btn-block ">Удалить фильтры</button>
+                {% endif%}
+              </td>
+          </form>
+        </tr>
+        {% if lessons|length == 0%}
+            <tr><td colspan="5" align="center"><b>Занятий нет!</b></td></tr>
+        {% endif %}
+        {% for lesson in lessons%}
+        <tr id="lesson{{ lesson.id }}"
+              {% if lesson.status == 1 %} class="success"
+              {% elif lesson.status == -1 %} class="danger"
+              {% endif%}>
+          <td><a href="{{ url_for('show_course', course_id=lesson.course.id) }}"><b>{{ lesson.course.title }}</b></a></td>
+          {% if user and user.is_admin%}
+          <td>{{ lesson.course.teacher.fio }}{% if lesson.course.teacher.phone %}( {{lesson.course.teacher.phone}} ){% endif %}</td>
+          {% endif%}
+          <td>
+            {% if lesson.timesheet.dow == 0 %}
+              Пн
+            {% elif lesson.timesheet.dow == 1 %}
+              Вт
+            {% elif lesson.timesheet.dow == 2 %}
+              Ср
+            {% elif lesson.timesheet.dow == 3 %}
+              Чт
+            {% elif lesson.timesheet.dow == 4 %}
+              Пт
+            {% elif lesson.timesheet.dow == 5 %}
+              Сб
+            {% elif lesson.timesheet.dow == 6 %}
+              Вск
+            {% endif%}
+            {{ lesson.timesheet.hod }}:{% if lesson.timesheet.moh|string|length != 2 %}0{% endif %}{{ lesson.timesheet.moh }}
+          </td>
+          <td>{{ lesson.timesheet.place.title }}</td>
+          <td class="btn-group btn-group-justified">
+            <a class="btn btn-primary" href="{{ url_for('show_lesson', lesson_id=lesson.id) }}">{% if lesson.status != 1 %}Начать{% else %}Подробнее{% endif %}</a>
+            {% if lesson.status != -1 %}<a class="btn btn-warning" onclick="cancelLesson({{ lesson.id }});">Отменить</a>{% endif %}
+             {% if user and user.is_admin%} 
+             <a class="btn btn-danger" onclick="deleteLesson({{ lesson.id }});">Удалить</a>
+             {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else%}
+       {%if user and  user.teacher or user.student%} 
+        <h3 style = "text-align:center"> <b>Добро пожаловать,</b> </h3>
+        <h4 style = "text-align:center; ">{% if user and user.teacher%} {{ user.teacher.fio }} {% elif user and user.student%} {{ user.student.fio }} {% endif%}</h4> 
+      {% else %} 
+        <h3 style = "text-align:center"> <a href="/login">Вход</a> </h3> 
+      {% endif%}  
+        <br><br>
+        <div class = "col-lg-4" ></div>
+        <div class = "col-lg-4" style = "background:url(/static/custom/css/hello.png); background-position:center center; background-repeat: no-repeat; background-size: contain; height:250px "></div>
+      <!-- <img class = "col-lg-4" src = "/static/custom/css/hello.png"> -->
+    {% endif%} 
+</div>
+
+{% endblock %}

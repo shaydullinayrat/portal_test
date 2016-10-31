@@ -1,0 +1,1746 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+
+
+ function primenit(){
+    $('#vvod_uroven').val($('#Level_tablo').html());
+    $('#vvod_operation').val($('#Operation_tablo').html())
+    $('#vvod_zad').val($('#Kolprim_tablo').html())
+    $('#vvod_kolslog').val($('#Kolslog_tablo').html())
+    $('#vvod_skorost').val($('#Skorost_tablo').html())
+    $('#vvod_kolcifr').val($('#Kolcifr_tablo').html())
+    $('#vvod_checked_cifr').val(whatchecked());
+    $('#vvod_half').val(half);
+  }
+  var half = true;
+function button_half_f(){
+  if ( Button_half.classList.contains('active') ){
+    Button_half.classList.remove('active');
+    half = false;
+  }
+  else{
+    Button_half.classList.add('active');
+    half = true;
+  }
+  primenit();
+}
+ function whatchecked(){
+  var arr=[];
+      arr.push(0);
+      if (button_1.classList.contains('active')) arr.push(1);
+      if (button_2.classList.contains('active')) arr.push(2);
+      if (button_3.classList.contains('active')) arr.push(3);
+      if (button_4.classList.contains('active')) arr.push(4);
+      if (button_5.classList.contains('active')) arr.push(5);
+      if (button_6.classList.contains('active')) arr.push(6);
+      if (button_7.classList.contains('active')) arr.push(7);
+      if (button_8.classList.contains('active')) arr.push(8);
+      if (button_9.classList.contains('active')) arr.push(9);
+      if (arr.length == 1) arr.push(1);
+  return arr;
+}
+
+function skorost_1(){
+  var t = Math.abs(parseFloat(prompt("Введите интервал времени задержки в пределах 0.001 до 10 сек")));
+  if (isNaN(t) || t <= 0) document.getElementById('Skorost_tablo').innerHTML = 1;
+  else{
+    document.getElementById('Skorost_tablo').innerHTML = t;
+  }
+  primenit();
+}
+
+function skorost_plus(){
+  var i = document.getElementById('Skorost_tablo').innerHTML;
+  i = parseInt(i*10)/10;
+  if (i > 0 && i <= 0.1) {
+    i += 0.01;
+    if (i <= 0) document.getElementById('Skorost_tablo').innerHTML = 0.01;
+    else document.getElementById('Skorost_tablo').innerHTML = i.toFixed(1);
+  }
+  if (i >= 0 && i < 1) {
+    i += 0.1;
+     document.getElementById('Skorost_tablo').innerHTML = i.toFixed(1);
+  }
+  else if (i >= 1 && i < 2) {
+    i+=0.2;
+    document.getElementById('Skorost_tablo').innerHTML  = i.toFixed(1);
+  }
+  else if (i >= 2 && i < 5) {
+    i+=0.5;
+    document.getElementById('Skorost_tablo').innerHTML  = i.toFixed(1);
+  }
+
+  else {
+    i+=1;
+    document.getElementById('Skorost_tablo').innerHTML  = i;
+  }
+  primenit();
+}
+
+function skorost_minus(){
+  var i = document.getElementById('Skorost_tablo').innerHTML;
+  if (i > 0 && i <= 0.1) {
+    i -= 0.01;
+    if (i <= 0) document.getElementById('Skorost_tablo').innerHTML = 0.01;
+    else document.getElementById('Skorost_tablo').innerHTML = i.toFixed(1);
+  }
+  if (i > 0.1 && i <= 1) {
+    i -= 0.1;
+    if (i <= 0) document.getElementById('Skorost_tablo').innerHTML = 0.01;
+    else document.getElementById('Skorost_tablo').innerHTML = i.toFixed(1);
+  }
+  else if (i > 1 && i <= 2) {
+    i -= 0.2;
+    document.getElementById('Skorost_tablo').innerHTML  = i.toFixed(1);
+  }
+  else if (i > 2 && i <= 5) {
+    i -= 0.5;
+    document.getElementById('Skorost_tablo').innerHTML  = i.toFixed(1);
+  }
+
+  else {
+    i -= 1;
+    document.getElementById('Skorost_tablo').innerHTML  = i;
+  }
+  primenit();
+}
+
+  function kolslog_plus(){
+    if (document.getElementById('Kolslog_tablo').innerHTML < 50) ++document.getElementById('Kolslog_tablo').innerHTML;
+  }
+
+  function kolslog_minus(){
+    if (document.getElementById('Kolslog_tablo').innerHTML > 2) --document.getElementById('Kolslog_tablo').innerHTML;
+  }
+
+  function kolslog_10(){
+    var t = Math.abs(parseFloat(prompt("Введите количество чисел в интервале 2 до 50")));
+    if (isNaN(t) || t < 2 || t > 50) document.getElementById('Kolslog_tablo').innerHTML = 10;
+    else{
+      t = parseInt(t);
+      document.getElementById('Kolslog_tablo').innerHTML = t;
+    }
+    primenit();
+  }
+
+function primer_enter(){
+
+  var t = Math.abs(parseFloat(prompt("Введите количество примеров от 1 до 50")));
+  if (isNaN(t) || t > 50 || t < 1) {
+    document.getElementById('Kolprim_tablo').innerHTML = 10;
+  }
+  else{
+    document.getElementById('Kolprim_tablo').innerHTML = parseInt(t);
+  }
+  primenit();
+
+}
+
+function kolprim_plus(){
+    if (document.getElementById('Kolprim_tablo').innerHTML < 50){
+      ++document.getElementById('Kolprim_tablo').innerHTML;
+    }
+  }
+
+  function kolprim_minus(){
+    if (document.getElementById('Kolprim_tablo').innerHTML > 1){
+      --document.getElementById('Kolprim_tablo').innerHTML;
+    }
+    primenit();
+  }
+
+
+function kolcifr_1() {
+
+  Button_Kolcifr_1.classList.add('active');
+  Button_Kolcifr_2.classList.remove('active');
+  Button_Kolcifr_3.classList.remove('active');
+  Button_Kolcifr_4.classList.remove('active');
+  document.getElementById('Kolcifr_tablo').innerHTML = 1;
+  primenit();
+}
+
+function kolcifr_2() {
+  Button_Kolcifr_1.classList.remove('active');
+  Button_Kolcifr_2.classList.add('active');
+  Button_Kolcifr_3.classList.remove('active');
+  Button_Kolcifr_4.classList.remove('active');
+  document.getElementById('Kolcifr_tablo').innerHTML = 2;
+  primenit();
+}
+
+function kolcifr_3() {
+  Button_Kolcifr_1.classList.remove('active');
+  Button_Kolcifr_2.classList.remove('active');
+  Button_Kolcifr_3.classList.add('active');
+  Button_Kolcifr_4.classList.remove('active');
+  document.getElementById('Kolcifr_tablo').innerHTML = 3;
+  primenit();
+}
+
+function kolcifr_4() {
+  Button_Kolcifr_1.classList.remove('active');
+  Button_Kolcifr_2.classList.remove('active');
+  Button_Kolcifr_3.classList.remove('active');
+  Button_Kolcifr_4.classList.add('active');
+  document.getElementById('Kolcifr_tablo').innerHTML = 4;
+  primenit();
+}
+
+
+
+function operation_plus() {
+  Button_operation_plus.classList.add('active');
+  Button_operation_minus.classList.remove('active');
+  Button_operation_plus_minus.classList.remove('active');
+  document.getElementById('Operation_tablo').innerHTML = 0;
+  primenit();
+}
+
+function operation_minus() {
+  Button_operation_plus.classList.remove('active');
+  Button_operation_minus.classList.add('active');
+  Button_operation_plus_minus.classList.remove('active');
+  document.getElementById('Operation_tablo').innerHTML = 1;
+  primenit();
+}
+
+function operation_plus_minus() {
+  Button_operation_plus.classList.remove('active');
+  Button_operation_minus.classList.remove('active');
+  Button_operation_plus_minus.classList.add('active');
+  document.getElementById('Operation_tablo').innerHTML = 2;
+  primenit();
+}
+
+
+
+ // Кнопка выбора всех видов слагаемых
+  function check_5(){
+    if (button_prosto.classList.contains('active')){
+      if (button_5.classList.contains('active')){
+        button_5.classList.remove('active');
+        button_6.classList.remove('active');
+        button_7.classList.remove('active');
+        button_8.classList.remove('active');
+        button_9.classList.remove('active');
+      }
+      else{
+        button_5.classList.add('active');
+      }
+    }
+    else{
+      if (button_5.classList.contains('active')){
+        button_5.classList.remove('active');
+      }
+      else{
+        button_5.classList.add('active')
+      }
+    }
+    primenit();
+  }
+
+  function check_6(){
+    if (button_prosto.classList.contains('active')){
+      if (button_6.classList.contains('active')){
+        button_6.classList.remove('active');
+        button_7.classList.remove('active');
+        button_8.classList.remove('active');
+        button_9.classList.remove('active');
+      }
+      else{
+        button_5.classList.add('active');
+        button_6.classList.add('active');
+      }
+    }
+    else{
+      if (button_6.classList.contains('active')){
+        button_6.classList.remove('active');
+      }
+      else{
+        button_6.classList.add('active')
+      }
+    }
+    primenit();
+  }
+
+  function check_1(){
+    if (!button_drug.classList.contains('active')){
+      if (button_1.classList.contains('active')) button_1.classList.remove('active')
+      else button_1.className =  "btn btn-default active";
+    }
+  }
+
+  function check_7(){
+    if (button_prosto.classList.contains('active')){
+      if (button_7.classList.contains('active')){
+        button_7.classList.remove('active');
+        button_8.classList.remove('active');
+        button_9.classList.remove('active');
+      }
+      else{
+        button_5.classList.add('active');
+        button_6.classList.add('active');
+        button_7.classList.add('active');
+      }
+    }
+    else{
+      if (button_7.classList.contains('active')){
+        button_7.classList.remove('active');
+      }
+      else{
+        button_7.classList.add('active')
+      }
+    }
+    primenit();
+  }
+
+  function check_8(){
+    if (button_prosto.classList.contains('active')){
+      if (button_8.classList.contains('active')){
+        button_8.classList.remove('active');
+        button_9.classList.remove('active');
+      }
+      else{
+        button_5.classList.add('active');
+        button_6.classList.add('active');
+        button_7.classList.add('active');
+        button_8.classList.add('active');
+      }
+    }
+    else{
+      if (button_8.classList.contains('active')){
+        button_8.classList.remove('active');
+      }
+      else{
+        button_8.classList.add('active')
+      }
+    }
+    primenit();
+  }
+
+  function check_9(){
+    if (button_prosto.classList.contains('active')){
+      if (button_9.classList.contains('active')){
+        button_9.classList.remove('active');
+      }
+      else{
+        button_5.classList.add('active');
+        button_6.classList.add('active');
+        button_7.classList.add('active');
+        button_8.classList.add('active');
+        button_9.classList.add('active');
+      }
+    }
+    else{
+      if (button_9.classList.contains('active')){
+        button_9.classList.remove('active');
+      }
+      else{
+        button_9.classList.add('active')
+      }
+    }
+    primenit();
+  }
+  function check_all(){
+    if (!button_check_all.classList.contains('active')){
+    button_check_all.classList.add('active');
+    if (!button_1.classList.contains('active')) button_1.classList.add('active');
+    if (!button_2.classList.contains('active')) button_2.classList.add('active');
+    if (!button_3.classList.contains('active')) button_3.classList.add('active');
+    if (!button_4.classList.contains('active')) button_4.classList.add('active');
+    if (!button_5.classList.contains('active')) button_5.classList.add('active');
+    if (!button_6.classList.contains('active')) button_6.classList.add('active');
+    if (!button_7.classList.contains('active')) button_7.classList.add('active');
+    if (!button_8.classList.contains('active')) button_8.classList.add('active');
+    if (!button_9.classList.contains('active')) button_9.classList.add('active');
+  }
+  else{
+    button_check_all.classList.remove('active');
+    if (button_1.classList.contains('active') && !button_1.classList.contains('hidden')) button_1.classList.remove('active');
+    if (button_2.classList.contains('active') && !button_2.classList.contains('hidden')) button_2.classList.remove('active');
+    if (button_3.classList.contains('active') && !button_3.classList.contains('hidden')) button_3.classList.remove('active');
+    if (button_4.classList.contains('active') && !button_4.classList.contains('hidden')) button_4.classList.remove('active');
+    if (button_5.classList.contains('active') && !button_5.classList.contains('hidden')) button_5.classList.remove('active');
+    if (button_6.classList.contains('active') && !button_6.classList.contains('hidden')) button_6.classList.remove('active');
+    if (button_7.classList.contains('active') && !button_7.classList.contains('hidden')) button_7.classList.remove('active');
+    if (button_8.classList.contains('active') && !button_8.classList.contains('hidden')) button_8.classList.remove('active');
+    if (button_9.classList.contains('active') && !button_9.classList.contains('hidden')) button_9.classList.remove('active');
+  }
+  primenit();
+  }
+
+
+
+  function button_prosto_f(){
+    if (button_prosto.classList.contains('active')){
+      check_all();
+    }
+    else{
+      button_6.classList.remove('hidden');
+      button_7.classList.remove('hidden');
+      button_8.classList.remove('hidden');
+      button_9.classList.remove('hidden');
+      document.getElementById('Level_tablo').innerHTML = 1;
+      button_prosto.classList.add('active');
+      button_brat.classList.remove('active');
+      button_drug.classList.remove('active');
+      button_combo.classList.remove('active');
+      button_random.classList.remove('active');
+
+      button_check_all.classList.add('active');
+      button_1.classList.add('active', 'hidden');
+      button_2.classList.add('active', 'hidden');
+      button_3.classList.add('active', 'hidden');
+      button_4.classList.add('active', 'hidden');
+      button_5.classList.add('active');
+      button_6.classList.add('active');
+      button_7.classList.add('active');
+      button_8.classList.add('active');
+      button_9.classList.add('active');
+    }
+    primenit();
+  }
+
+  function button_brat_f(){
+    if (button_brat.classList.contains('active')){
+      check_all();
+    }
+    else{
+    button_1.classList.remove('hidden');
+    button_2.classList.remove('hidden');
+    button_3.classList.remove('hidden');
+    button_4.classList.remove('hidden');
+    document.getElementById('Level_tablo').innerHTML = 2;
+    button_prosto.classList.remove('active');
+    button_brat.classList.add('active');
+    button_drug.classList.remove('active');
+    button_combo.classList.remove('active');
+    button_random.classList.remove('active');
+
+    button_check_all.classList.add('active');
+    button_1.classList.add('active');
+    button_2.classList.add('active');
+    button_3.classList.add('active');
+    button_4.classList.add('active');
+    button_5.classList.add('active', 'hidden');
+    button_6.classList.add('active', 'hidden');
+    button_7.classList.add('active', 'hidden');
+    button_8.classList.add('active', 'hidden');
+    button_9.classList.add('active', 'hidden');
+    }
+    primenit();
+  }
+
+  function button_drug_f(){
+    if (button_drug.classList.contains('active')){
+      check_all();
+    }
+    else{
+    button_1.classList.remove('hidden');
+    button_2.classList.remove('hidden');
+    button_3.classList.remove('hidden');
+    button_4.classList.remove('hidden');
+    button_5.classList.remove('hidden');
+    button_6.classList.remove('hidden');
+    button_7.classList.remove('hidden');
+    button_8.classList.remove('hidden');
+    button_9.classList.remove('hidden');
+    document.getElementById('Level_tablo').innerHTML = 3;
+    button_prosto.classList.remove('active');
+    button_brat.classList.remove('active');
+    button_drug.classList.add('active');
+    button_combo.classList.remove('active');
+    button_random.classList.remove('active');
+
+    button_check_all.classList.add('active');
+    button_1.classList.add('active');
+    button_2.classList.add('active');
+    button_3.classList.add('active');
+    button_4.classList.add('active');
+    button_5.classList.add('active');
+    button_6.classList.add('active');
+    button_7.classList.add('active');
+    button_8.classList.add('active');
+    button_9.classList.add('active');
+  }
+  primenit();
+  }
+
+  function button_combo_f(){
+    if (button_combo.classList.contains('active')){
+      check_all();
+    }
+    else{
+      button_6.classList.remove('hidden');
+      button_7.classList.remove('hidden');
+      button_8.classList.remove('hidden');
+      button_9.classList.remove('hidden');
+      document.getElementById('Level_tablo').innerHTML = 4;
+      button_prosto.classList.remove('active');
+      button_brat.classList.remove('active');
+      button_drug.classList.remove('active');
+      button_combo.classList.add('active');
+      button_random.classList.remove('active');
+
+      button_check_all.classList.add('active');
+      button_1.classList.add('active', 'hidden');
+      button_2.classList.add('active', 'hidden');
+      button_3.classList.add('active', 'hidden');
+      button_4.classList.add('active', 'hidden');
+      button_5.classList.add('active', 'hidden');
+      button_6.classList.add('active');
+      button_7.classList.add('active');
+      button_8.classList.add('active');
+      button_9.classList.add('active');
+    }
+    primenit();
+  }
+
+  function button_random_f(){
+    document.getElementById('Level_tablo').innerHTML = 5;
+    button_prosto.classList.remove('active');
+    button_brat.classList.remove('active');
+    button_drug.classList.remove('active');
+    button_combo.classList.remove('active');
+    button_random.classList.add('active');
+
+    button_check_all.classList.add('active');
+    button_1.classList.add('active', 'hidden');
+    button_2.classList.add('active', 'hidden');
+    button_3.classList.add('active', 'hidden');
+    button_4.classList.add('active', 'hidden');
+    button_5.classList.add('active', 'hidden');
+    button_6.classList.add('active', 'hidden');
+    button_7.classList.add('active', 'hidden');
+    button_8.classList.add('active', 'hidden');
+    button_9.classList.add('active', 'hidden');
+    primenit();
+  }
+
+function changeType(homework_id){
+  $.post('{{ url_for("get_homework") }}', {
+      // params, that will be send as 'POST'
+      homework_id: homework_id
+  }).done(function(data) {
+      // actions, that will be done after successfull response
+      if (data.res == 1){
+        if (data.title == 'Счет на скорость'){
+          menarargs = `
+      <div class="panel-body col-lg-8 col-md-8 col-sm-8 ">
+        <div class="panel-body " style=" text-align:center"> <h4>Модуль</h4>
+              <div class="btn-group btn-group-justified">
+            <a  id = "button_prosto" onclick = "button_prosto_f(); return false;" style = " text-transform:  none"  class="btn btn-default active" title="Простой счет">Просто</a>
+            <a  id = "button_brat" onclick = "button_brat_f(); return false;" class="btn btn-default" title="Помощь брата" style = " text-transform:  none">Брат</a>
+            <a  id = "button_drug" onclick = "button_drug_f(); return false;" class="btn btn-default" title="Помощь друга" style = " text-transform:  none">Друг</a>
+            <a  id = "Level_tablo" class="btn btn-default hidden" >1</a>
+            <a  id = "button_combo" onclick = "button_combo_f(); return false;" class="btn btn-default" title="Комбинированный счет" style = " text-transform:  none">Комбо</a>
+            <a  id = "button_random" onclick = "button_random_f(); return false;" class="btn btn-default" title="Счет по ступеням" style = " text-transform:  none">Ступ</a>
+        </div>
+          <div class="btn-group btn-group-justified">
+            <a  id = "button_1"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;" >1</a>
+            <a  id = "button_2"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">2</a>
+            <a  id = "button_3"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">3</a>
+            <a  id = "button_4"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">4</a>
+            <a  id = "button_5"  class="btn btn-default active" onclick = "check_5();return false;">5</a>
+            <a  id = "button_6"  class="btn btn-default active" onclick = "check_6();return false;">6</a>
+            <a  id = "button_7"  class="btn btn-default active" onclick = "check_7();return false;">7</a>
+            <a  id = "button_8"  class="btn btn-default active" onclick = "check_8();return false;">8</a>
+            <a  id = "button_9"  class="btn btn-default active" onclick = "check_9();return false;">9</a>
+          </div>
+          <div class="btn-group btn-group-justified">
+            <a  id = "button_check_all" class="btn btn-default active hidden" onclick = "check_all(); return false;">Выбрать все</a>
+          </div>
+      </div>
+      <div  class="panel-body" style=" text-align:center"> <h4>Сложность</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default active" id = "Button_Kolcifr_1" onclick = "kolcifr_1();return false;">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_2" onclick = "kolcifr_2();return false;">10</a>
+            <a  class="btn btn-default hidden "  id = "Kolcifr_tablo">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_3" onclick = "kolcifr_3();return false;">100</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_4" onclick = "kolcifr_4();return false;">1000</a>
+            <a  class="btn btn-default active" id = "Button_half" onclick = "button_half_f();return false;">1/2</a>
+        </div>
+      </div>
+      <div  class="panel-body" style=" text-align:center"> <h4>Операции</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" id = "Button_operation_plus" title="Сложение" onclick = "operation_plus();return false;" >+</a>
+            <a  class="btn btn-default hidden" id = "Operation_tablo" >2</a>
+            <a  class="btn btn-default" id = "Button_operation_minus" title="Вычитание" onclick = "operation_minus();return false;">-</a>
+            <a  class="btn btn-default active" id = "Button_operation_plus_minus" title="Сложение+Вычитание" onclick = "operation_plus_minus();return false;">+/-</a>
+        </div>
+      </div>
+
+    </div>
+
+      <div class="panel-body col-lg-4 col-md-4 col-sm-4">
+
+      <div class="panel-body" style="  text-align:center"> <h4> Количество слагаемых </h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default " onclick = "kolslog_minus();return false;">-</a>
+            <a  class="btn btn-default active"  id = "Kolslog_tablo" onclick = "kolslog_10();return false;" >4</a>
+            <a  class="btn btn-default" onclick = "kolslog_plus();return false;">+</a>
+        </div>
+      </div>
+      <div class="panel-body" style=" text-align:center"> <h4>Количество        примеров</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "kolprim_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Kolprim_tablo" onclick = "primer_enter();return false;">6</a>
+            <a  class="btn btn-default" onclick = "kolprim_plus();return false;">+</a>
+        </div>
+      </div>
+      <div class="panel-body" style=" text-align:center"> <h4>Интервал</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "skorost_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Skorost_tablo" onclick = "skorost_1();return false;">1</a>
+            <a  class="btn btn-default" onclick = "skorost_plus();return false;">+</a>
+        </div>
+      </div>
+    </div>`
+    $('#modal_args_field').html(menarargs)
+          for (item in data.args){
+            input = '<input id="' + data.args[item] + '" name="' + data.args[item] + '" type="hidden">'
+            $('#modal_args_field').html($('#modal_args_field').html()+input)
+          }
+  }
+    else if (data.title == 'Столбцы'){
+          menarargs = `
+      <div class="panel-body col-lg-8 col-md-8 col-sm-8 ">
+        <div class="panel-body " style=" text-align:center"> <h4>Модуль</h4>
+              <div class="btn-group btn-group-justified">
+            <a  id = "button_prosto" onclick = "button_prosto_f(); return false;" style = " text-transform:  none"  class="btn btn-default active" title="Простой счет">Просто</a>
+            <a  id = "button_brat" onclick = "button_brat_f(); return false;" class="btn btn-default" title="Помощь брата" style = " text-transform:  none">Брат</a>
+            <a  id = "button_drug" onclick = "button_drug_f(); return false;" class="btn btn-default" title="Помощь друга" style = " text-transform:  none">Друг</a>
+            <a  id = "Level_tablo" class="btn btn-default hidden" >1</a>
+            <a  id = "button_combo" onclick = "button_combo_f(); return false;" class="btn btn-default" title="Комбинированный счет" style = " text-transform:  none">Комбо</a>
+            <a  id = "button_random" onclick = "button_random_f(); return false;" class="btn btn-default" title="Счет по ступеням" style = " text-transform:  none">Ступ</a>
+        </div>
+          <div class="btn-group btn-group-justified">
+            <a  id = "button_1"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;" >1</a>
+            <a  id = "button_2"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">2</a>
+            <a  id = "button_3"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">3</a>
+            <a  id = "button_4"  class="btn btn-default active hidden" onclick = "this.className = (this.className == 'btn btn-default' ? 'btn btn-default active' : 'btn btn-default') ;return false;">4</a>
+            <a  id = "button_5"  class="btn btn-default active" onclick = "check_5();return false;">5</a>
+            <a  id = "button_6"  class="btn btn-default active" onclick = "check_6();return false;">6</a>
+            <a  id = "button_7"  class="btn btn-default active" onclick = "check_7();return false;">7</a>
+            <a  id = "button_8"  class="btn btn-default active" onclick = "check_8();return false;">8</a>
+            <a  id = "button_9"  class="btn btn-default active" onclick = "check_9();return false;">9</a>
+          </div>
+          <div class="btn-group btn-group-justified">
+            <a  id = "button_check_all" class="btn btn-default active hidden" onclick = "check_all(); return false;">Выбрать все</a>
+          </div>
+      </div>
+      <div  class="panel-body" style=" text-align:center"> <h4>Сложность</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default active" id = "Button_Kolcifr_1" onclick = "kolcifr_1();return false;">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_2" onclick = "kolcifr_2();return false;">10</a>
+            <a  class="btn btn-default hidden "  id = "Kolcifr_tablo">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_3" onclick = "kolcifr_3();return false;">100</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_4" onclick = "kolcifr_4();return false;">1000</a>
+            <a  class="btn btn-default active" id = "Button_half" onclick = "button_half_f();return false;">1/2</a>
+        </div>
+      </div>
+      <div  class="panel-body" style=" text-align:center"> <h4>Операции</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" id = "Button_operation_plus" title="Сложение" onclick = "operation_plus();return false;" >+</a>
+            <a  class="btn btn-default hidden" id = "Operation_tablo" >2</a>
+            <a  class="btn btn-default" id = "Button_operation_minus" title="Вычитание" onclick = "operation_minus();return false;">-</a>
+            <a  class="btn btn-default active" id = "Button_operation_plus_minus" title="Сложение+Вычитание" onclick = "operation_plus_minus();return false;">+/-</a>
+        </div>
+      </div>
+
+    </div>
+
+      <div class="panel-body col-lg-4 col-md-4 col-sm-4">
+
+      <div class="panel-body" style="  text-align:center"> <h4> Количество слагаемых </h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default " onclick = "kolslog_minus();return false;">-</a>
+            <a  class="btn btn-default active"  id = "Kolslog_tablo" onclick = "kolslog_10();return false;" >4</a>
+            <a  class="btn btn-default" onclick = "kolslog_plus();return false;">+</a>
+        </div>
+      </div>
+      <div class="panel-body" style=" text-align:center"> <h4>Количество        примеров</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "kolprim_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Kolprim_tablo" onclick = "primer_enter();return false;">6</a>
+            <a  class="btn btn-default" onclick = "kolprim_plus();return false;">+</a>
+        </div>
+      </div>
+    </div>`
+    $('#modal_args_field').html(menarargs)
+          for (item in data.args){
+            input = '<input id="' + data.args[item] + '" name="' + data.args[item] + '" type="hidden">'
+            $('#modal_args_field').html($('#modal_args_field').html()+input)
+          }
+  }
+    else if (data.title == 'Флэш-карты'){
+          menarargs = `
+      <div class="panel-body col-lg-7 col-md-7 col-sm-7">
+      <div  class="panel-body" style=" text-align:center"> <h4>Сложность</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default active" id = "Button_Kolcifr_1" onclick = "kolcifr_1();return false;">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_2" onclick = "kolcifr_2();return false;">10</a>
+            <a  class="btn btn-default hidden "  id = "Kolcifr_tablo">1</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_3" onclick = "kolcifr_3();return false;">100</a>
+            <a  class="btn btn-default" id = "Button_Kolcifr_4" onclick = "kolcifr_4();return false;">1000</a>
+        </div>
+      </div>
+     </div>
+     <div class="panel-body col-lg-5 col-md-5 col-sm-5">
+      <div class="panel-body" style=" text-align:center"> <h4>Количество        примеров</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "kolprim_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Kolprim_tablo" onclick = "primer_enter();return false;">6</a>
+            <a  class="btn btn-default" onclick = "kolprim_plus();return false;">+</a>
+        </div>
+      </div>
+      <div class="panel-body" style=" text-align:center"> <h4>Интервал</h4>
+        <div class="btn-group btn-group-justified">
+            <a  class="btn btn-default" onclick = "skorost_minus();return false;">-</a>
+            <a  class="btn btn-default active" id="Skorost_tablo" onclick = "skorost_1();return false;">1</a>
+            <a  class="btn btn-default" onclick = "skorost_plus();return false;">+</a>
+        </div>
+      </div>
+      </div>`
+          $('#modal_args_field').html(menarargs)
+          for (item in data.args){
+            input = '<input id="' + data.args[item] + '" name="' + data.args[item] + '" type="hidden">'
+            $('#modal_args_field').html($('#modal_args_field').html()+input)
+          }
+
+        }else{
+          $('#modal_args_field').html('')
+          for (item in data.args){
+            input = '<br/><div class="form-group">'+
+                      '<label for="inputEmail" class="col-lg-3 control-label">' + data.args[item] + '</label>' +
+                      '<div class="col-lg-9">' +
+                        '<input class="form-control" name="' + data.args[item] +'" placeholder="' + data.args[item] +
+                        '" type="text"></div></div>'
+            $('#modal_args_field').html($('#modal_args_field').html()+input)
+          }
+        }
+
+        $('#homework_modal').modal('show');
+      }
+  }).fail(function() {
+    // actions, that will be done after UNsuccessfull response
+    alert('error')
+  });
+}
+function more_abstract(lesson_id){
+  $.post('{{ url_for("get_lesson_text") }}', {
+      lesson_id: lesson_id
+  }).done(function(data) {
+      if (data.res == 1){
+        $('#modal_abstract_lesson_id').val(lesson_id)
+        $('#modal_lesson_title').val(data.title)
+        $('#modal_text').html(data.text)
+        $('#abstract_modal').modal('show');
+      }
+  }).fail(function() {
+    alert('error')
+  });
+}
+function more_homework(lesson_id){
+    $('#modal_lesson_id').val(lesson_id);
+    changeType($('#homework_id').val());
+    // $('#homework_modal').modal('show');
+}
+
+
+function deleteCourse(id) {
+    if (confirm('Вы уверены?')){
+      // Example of client side AJAX
+      // function uses jQuery to send async request to server (into '/sayhello' address)
+      $.post('{{ url_for("delete_course") }}', {
+          // params, that will be send as 'POST'
+          id: id
+      }).done(function(data) {
+          // actions, that will be done after successfull response
+          if (data.res == 1){
+              com = '#course_' + id
+              $(com).hide()
+
+          }
+
+      }).fail(function() {
+          // actions, that will be done after UNsuccessfull response
+          alert('error')
+      });
+    }
+}
+function more_course(id, title, discipline_id, teacher_id, cost, student_cost, start_date, end_date){
+    $('#modal_id_course').val(id);
+    $('#modal_title_course').val(title)
+    $('#modal_discipline_course').val(discipline_id)
+    $('#modal_teacher_course').val(teacher_id)
+    $('#modal_cost_course').val(cost)
+    $('#modal_student_cost_course').val(student_cost)
+    $('#modal_start_date_course').val(start_date)
+    $('#modal_end_date_course').val(end_date)
+    $('#modal_course').modal('show');
+}
+
+function more_payment_modal(id, student_id, student_fio, lesson_date, amount, amount_extra, comment_extra ){
+  $('#modal_payment_id').val(id) 
+  $('#student_id').val(student_id)
+  $('#student_fio').val(student_fio)
+  $('#lesson_date').val(lesson_date)
+  $('#lesson_date_show').val(lesson_date)
+  $('#modal_pay').val(amount)
+  $('#modal_cost_extra').val(amount_extra)
+  $('#modal_cost_extra_comment').val(comment_extra)
+  $('#payment_modal').modal('show');
+}
+
+
+function check_presence(student_id, lesson_id, status, student_cost) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("check_presence") }}', {
+        // params, that will be send as 'POST'
+        student_id: student_id,
+        lesson_id: lesson_id,
+        status: status
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        student_cost = parseInt(student_cost)
+        if (data.res == 1){
+            com = '#presence_' + student_id + lesson_id
+            reason_com = '#reason_' + student_id + lesson_id
+            balance_com = '#balance_' + student_id
+            if (status == 1){
+              if ( !$(com).hasClass('danger') && !$(com).hasClass('success')){
+                balance = parseInt($(balance_com).html())
+                balance -= student_cost
+                if (balance < 0 ) $(balance_com).addClass('red-danger')
+                balance = balance + 'р.'
+                $(balance_com).html(balance)
+              }
+              $(com).removeClass('danger')
+              $(com).removeClass('info')
+              $(com).addClass('success')
+              
+              $(reason_com).html('П')
+            }else if (status == 2){
+              if ( $(com).hasClass('danger') || $(com).hasClass('success') ){
+                balance = parseInt($(balance_com).html())
+                balance += student_cost
+                if (balance > 0 ) $(balance_com).removeClass('red-danger')
+                balance = balance + 'р.'
+                $(balance_com).html(balance)
+              }
+              $(com).removeClass('success')
+              $(com).removeClass('danger')
+              $(com).addClass('info')
+              $(reason_com).html('У')
+
+            }else{
+              if ( !$(com).hasClass('danger') && !$(com).hasClass('success') ){
+                balance = parseInt($(balance_com).html())
+                balance -= student_cost
+                if (balance < 0 ) $(balance_com).addClass('red-danger')
+                balance = balance + 'р.'
+                $(balance_com).html(balance)
+              }
+              $(com).removeClass('success')
+              $(com).removeClass('info')
+              $(com).addClass('danger')
+              $(reason_com).html('Н')
+            }
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+
+function startLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('start_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#lesson_' + id
+            {% for student in students %}
+            com2 = '#presence_' + {{student.student.id}} + id
+            reason_com = '#reason_' + {{student.student.id}} + id
+            $(reason_com).removeClass('disabled')
+            if (!$(com).hasClass('danger')){
+              $(com2).addClass('can-check-presence')
+            } 
+            {%endfor%}
+            $(com).removeClass('danger')
+            $(com).addClass('success')
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}    
+
+function cancelLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    {% for student in students %}
+      check_presence('{{ student.student.id }}', id , 2 , '{{ student.cost }}')
+      com = '#presence_' + {{student.student.id}} + id
+      reason_com = '#reason_' + {{student.student.id}} + id
+      $(reason_com).addClass('disabled')
+      $(com).removeClass('can-check-presence')
+    {% endfor %}
+    $.post('{{ url_for('cancel_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#lesson_' + id
+            $(com).addClass('danger')
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+function deleteLesson(lesson_id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    if (confirm('Вы уверены?')){
+      $.post('{{ url_for("delete_lesson") }}', {
+          // params, that will be send as 'POST'
+          lesson_id: lesson_id
+      }).done(function(data) {
+          // actions, that will be done after successfull response
+          if (data.res == 1){
+              // com = '#' + id
+              // $(com).hide()
+              lesson_com = '#lesson_'+lesson_id
+              weekday_com = '#weekday_'+lesson_id
+              $(lesson_com).hide()
+              $(weekday_com).hide()
+              {% for student in students %}
+                presence_com = '#presence_'+{{student.student.id}}+lesson_id
+                $(presence_com).hide()
+              {% endfor %}  
+          }
+      }).fail(function() {
+          // actions, that will be done after UNsuccessfull response
+          alert('error')
+      });
+    }
+}
+
+function more(id, place, dow, hod, moh, hoe, moe){
+    $('#modal_timesheet_id').val(id);
+    $('#modal_place').val(place);
+    $('#modal_dow').val(dow);
+    $('#modal_hod').val(hod);
+    $('#modal_moh').val(moh);
+    $('#modal_hoe').val(hoe);
+    $('#modal_moe').val(moe);
+    $('#time_modal').modal('show');
+}
+
+function deleteTimesheet(id) {
+  if (confirm('Вы уверены?')){
+
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_timesheet") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#timesheet' + id
+            $(com).hide()
+            document.location.replace(location.href);
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+
+function more_course_student(id, student_id, cost, comment){
+    $('#modal_id').val(id);
+    $('#modal_student_id').val(student_id);
+    if (student_id != ''){
+      $('#modal_student_id_field').hide()
+      // {% for student in students %}
+      // {% if student.student.id == student_id %}
+      // $('#modal_student_cost_fio').val(student.student.fio)
+      // {% endif %}
+      // {% endfor %}
+    }else{
+      $('#modal_student_id_field').show()
+    }
+    $('#modal_cost').val(cost);
+    $('#modal_cost_comment').val(comment);
+    $('#modal').modal('show');
+}
+
+function more_student(id, username, password, email, fio, parent, phone, age){
+    $('#modal_id_info').val(id);
+    $('#modal_username').val(username);
+    $('#modal_password').val(password);
+    $('#modal_email').val(email);
+    $('#modal_fio').val(fio);
+    $('#modal_parent').val(parent);
+    $('#modal_phone').val(phone);
+    $('#modal_age').val(age);
+    $('#modal_info').modal('show');
+}
+
+function deleteCourseStudent(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_student_course_cost") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#student_course_' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+</script>
+
+<div class="row" >
+
+ 
+
+   {% if user and user.is_admin or user.teacher%}
+     <h4 class = "col-lg-4"><b>Табель посещаемости</b> </h4> <h5 class = "col-lg-4">Курс: {{ course.title }}</h5> <h5 class = "col-lg-4">Преподаватель: {{ course.teacher.fio }}</h5> 
+    <table class="table table-striped table-bordered table-hover panel panel-primary">
+      <thead class="panel-heading">
+        {% if user and user.is_admin or user.teacher%}
+        <tr>
+        <th>
+          <form action="" method="POST">
+            <select style = "color:white" class="form-control" id="month" name="month" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  <option style = "color:grey" value="9" {% if (request.form.month == '9') or (today.month == 9) %} selected="selected"{% endif %}>
+                  Сентябрь</option>
+                  <option style = "color:grey" value="10" {% if (request.form.month == '10') or (today.month == 10) %} selected="selected"{% endif %}>
+                  Октябрь</option>
+                  <option style = "color:grey" value="11" {% if (request.form.month == '11') or (today.month == 11) %} selected="selected"{% endif %}>
+                  Ноябрь</option>
+                  <option style = "color:grey" value="12" {% if (request.form.month == '12') or (today.month == 12) %} selected="selected"{% endif %}>  
+                  Декабрь</option>
+                  <option style = "color:grey" value="1" {% if (request.form.month == '1') or (today.month == 1) %} selected="selected"{% endif %}>
+                  Январь</option>
+                  <option style = "color:grey" value="2" {% if (request.form.month == '2') or (today.month == 2) %} selected="selected"{% endif %}>
+                  Февраль</option>
+                  <option style = "color:grey" value="3" {% if (request.form.month == '3') or (today.month == 3) %} selected="selected"{% endif %}>
+                  Март</option>
+                  <option style = "color:grey" value="4" {% if (request.form.month == '4') or (today.month == 4) %} selected="selected"{% endif %}>
+                  Апрель</option>
+                  <option style = "color:grey" value="5" {% if (request.form.month == '5') or (today.month == 5) %} selected="selected"{% endif %}>
+                  Май</option>
+                  <option style = "color:grey" value="6" {% if (request.form.month == '6') or (today.month == 6) %} selected="selected"{% endif %}>
+                  Июнь</option>
+                  <option style = "color:grey" value="7" {% if (request.form.month == '7') or (today.month == 7) %} selected="selected"{% endif %}>
+                  Июль</option>
+                  <option style = "color:grey" value="8" {% if (request.form.month == '8') or (today.month == 8) %} selected="selected"{% endif %}>
+                  Август</option>
+            </select>
+          </form> 
+        </th>
+<!-- 
+        <th >Телефон</th>
+        <th >Стоимость занятия</th>
+        <th >Комментарий</th> -->
+
+
+          {% for lesson in lessons %}  
+             <th id = "weekday_{{lesson.id}}" style = "text-align:center">
+              
+                    {% if lesson.timesheet.dow == 0 %}
+                      Пн
+                    {% elif lesson.timesheet.dow == 1 %}
+                      Вт
+                    {% elif lesson.timesheet.dow == 2 %}
+                      Ср
+                    {% elif lesson.timesheet.dow == 3 %}
+                      Чт
+                    {% elif lesson.timesheet.dow == 4 %}
+                      Пт
+                    {% elif lesson.timesheet.dow == 5 %}
+                      Сб
+                    {% elif lesson.timesheet.dow == 6 %}
+                      Вс
+                    {% endif%}
+              </th>
+          {% endfor %}
+        </tr>  
+      </thead>
+      <tbody class="panel-body">
+        <tr>
+          <td>
+            {% if user and user.is_admin%}
+            <div class="col-lg-3 ">
+              Телефон
+            </div> 
+            
+            <div class="col-lg-1 ">
+              Стоим
+            </div> 
+            <div class="col-lg-2 ">
+             Оплата
+            </div> 
+            <div class="col-lg-2 ">
+             Баланс
+            </div> 
+             <div class="col-lg-4 ">
+            {% elif user and user.teacher%}  
+            <div class="col-lg-4 ">
+              Телефон
+            </div> 
+            <div class="col-lg-8 ">
+              {% endif %}
+              {% if user and user.is_admin%} <a class="btn btn-success" onclick="more_course_student('', '', {{ course.student_cost }}, '');"><b> +  УЧЕНИК</b></a> {% endif %}
+            </div>
+          </td>
+          <!-- <td></td>  <td></td>  <td></td> -->
+          {% for lesson in lessons %}  
+             <td id="lesson_{{ lesson.id }}" style = "text-align:center" {% if lesson.status == 1 %} class = "success" {% elif lesson.status == -1 %}  class = "danger" {% endif %}>
+                <div class="btn-group ">
+                  <a style = " font-size: 15px; display:'inline-block'; padding:15px; color:grey" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><b>{{lesson.date.strftime('%d')}}</b></a>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="startLesson({{ lesson.id }});" href="#">Начать</a></li>
+                    <li><a onclick="cancelLesson({{ lesson.id }});" href="#">Отменить</a></li> 
+                    
+                    {% if user and user.teacher%} 
+                    <li><a onclick="more_homework({{ lesson.id }});" href="#">Дать ДЗ</a></li>
+                    <li><a onclick="more_abstract({{ lesson.id }});" href="#">Тема занятия</a></li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </td>
+          {% endfor %}
+        </tr>
+        {% for student in students%}
+        <tr id = "student_course_{{student.id}}" >
+          <td>
+           {% if user and user.is_admin%}
+            <div class="col-lg-3 ">
+              {{ student.student.phone }}
+            </div> 
+            
+            <div id =  "payment_{{student.student.id}}" class="col-lg-1 ">
+              {{ student.cost }}
+            </div> 
+            <div  class="col-lg-2 ">
+               {% for res in result %}
+             {% if res.student_id == student.id %}
+             {{ res.this_month_payments }} р.
+            {% endif %} 
+             {% endfor %}
+            </div> 
+            <div id =  "balance_{{student.student.id}}" class="col-lg-2 {% for res in result %}
+             {% if res.student_id == student.id %} {% if res.debt < 0 %} red-danger {% endif %}">
+              
+              {{ res.debt }} р.
+              {% endif %} 
+             {% endfor %}
+            </div>
+             <div class="col-lg-4 ">
+            {% elif user and user.teacher%}  
+             <div class="col-lg-4 ">
+              {{ student.student.phone }}
+            </div> 
+            <div class="col-lg-8 ">
+              {% endif %}
+              <div class="btn-group ">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><b>{{student.student.fio}} </b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('show_student', student_id=student.student.id) }}">Профиль</a></li>
+                   <!--  <li><a href="#" onclick="more_student('{{ student.student.id }}', '{{ student.student.user.username }}', '{{ student.student.user.password }}', '{{ student.student.user.email }}', '{{ student.student.fio }}', '{{ student.student.parent }}', '{{ student.student.phone }}', {% if student.student.age.strftime('%d.%m.%Y') != '01.01.1900' %} '{{ student.student.age.strftime('%d.%m.%Y') }}' {% else%} '' {% endif%} );">Профиль</a></li> -->
+                    <li><a href="#" onclick="more_course_student({{ student.id }}, {{ student.student.id }}, '{{ student.cost }}', '{{ student.comment }}');">Стоимость занятия</a></li>
+                    <li><a href="#"  onclick="deleteCourseStudent({{ student.id }});">Удалить</a> </li>         
+                  </ul>
+              </div>
+            </div>
+           {%  for lesson in lessons  %}
+              <td  id='presence_{{ student.student.id  }}{{ lesson.id  }}' style = "text-align:center" 
+
+                {% for presence in lespresences %}
+                  {% if (presence.student_id == student.student.id) and (presence.lesson.date == lesson.date) %}
+                    {% if presence.status == 1 %} 
+                      class ="success" 
+                    {% elif presence.status == 2 %} 
+                      class ="info" 
+                    {% elif presence.status == -1 %} 
+                      class ="danger"  
+                    {% else %} 
+                      class ="danger" 
+                    {% endif %}
+                  {% endif %}   
+               {% endfor%}
+               {% if lesson.status == 1%}
+              class = "can-check-presence"
+              {% endif%}>
+                  <div class="btn-group"  >
+                    {% for payment in student.student.payments.all()%} {% if (payment.date.strftime('%d.%m.%Y') == lesson.date.strftime('%d.%m.%Y')) and (payment.amount != 0) %}<span class="label label-success"> {{payment.amount }} </span>{% endif %}{% endfor %}<a  id="reason_{{ student.student.id }}{{ lesson.id  }}" style = "display:'inline-block'; padding:15px; color:grey" href="#"  class="dropdown-toggle {% if lesson.status!=1 %} disabled {%endif%}" data-toggle="dropdown" aria-expanded="false">
+                    {% for presence in lespresences %}
+                        {% if (presence.student_id == student.student.id) and (presence.lesson.date == lesson.date) %}
+                          {% if presence.status == 1 %} 
+                            П
+                          {% elif presence.status == 2 %} 
+                            У 
+                          {% elif presence.status == -1 %} 
+                            Н  
+                          {% else %} 
+                            ? 
+                          {% endif %}
+                        {% endif %} 
+                    {% endfor%}  
+                    </a> {% for payment in student.student.payments.all()%} {% if (payment.date.strftime('%d.%m.%Y') == lesson.date.strftime('%d.%m.%Y')) and (payment.amount_extra != 0) %}<span class="label label-info"> {{payment.amount_extra }}  </span>{% endif %}{% endfor %}
+                    <ul class="dropdown-menu">
+                      <li><a onclick="check_presence('{{ student.student.id }}', '{{ lesson.id }}', 1 , '{{ student.cost }}');" href="#">Присутствовал</a></li>
+                      <li><a onclick="check_presence('{{ student.student.id }}', '{{ lesson.id }}', -1, '{{ student.cost }}');" href="#">Отсутствовал</a></li>
+                      {% if user and user.is_admin%} <li><a  onclick="check_presence('{{ student.student.id }}', '{{ lesson.id }}', 2, '{{ student.cost }}');" href="#">Отсутствовал по уважительной причине</a></li>
+                      <li class="divider"></li>
+                      {% for payment in student.student.payments.all()%} 
+                        {% if (payment.date.strftime('%d.%m.%Y') == lesson.date.strftime('%d.%m.%Y')) %}         
+                      <li><a class = "can-check-presence" onclick="more_payment_modal({{payment.id}}, '{{ student.student.id }}', '{{ student.student.fio }}', '{{ lesson.date }}','{{ payment.amount }}','{{ payment.amount_extra }}', '{{ payment.comment_extra }}'  );" href="#">Редактировать оплату</a> 
+                        </li>                           
+                        {% endif%} {% endfor%}
+                        <li> <a onclick="more_payment_modal('', '{{ student.student.id }}', '{{ student.student.fio }}',  '{{ lesson.date }}','','', ''  );" href="#">Оплата</a>  </li>
+                       {% endif %}
+
+                    </ul>
+                  </div>
+                </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+     </tbody>
+     {% endif%}
+    </table>
+    {% endif%} 
+</div>
+ <div class="col-lg-5" >
+    <h4><b>Сведения о курсе</b>
+      {% if user and user.is_admin%}
+      <a onclick="more_course('{{ course.id }}', '{{ course.title }}', '{{ course.discipline_id }}', '{{course.teacher_id }}', '{{ course.cost }}', '{{ course.student_cost }}','{{ course.start_date.strftime('%d.%m.%Y') }}', '{{ course.end_date.strftime('%d.%m.%Y') }}');"  class="btn btn-success" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Редактировать курс</a>
+     
+      <!-- <div class="btn-group" >
+                  <a  class="btn btn-success" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Действие</a>
+                  <ul class="dropdown-menu"> 
+                    <li><a   href="#" onclick="more_course('', '', '', '', '', '', '', '');">Новый курс</a></li>
+                     <li><a  href="#" onclick="more_course('{{ course.id }}', '{{ course.title }}', '{{ course.discipline_id }}', '{{course.teacher_id }}', '{{ course.cost }}', '{{ course.student_cost }}','{{ course.start_date.strftime('%d.%m.%Y') }}', '{{ course.end_date.strftime('%d.%m.%Y') }}');">Редактировать</a></li>
+                    <li><a  href="#" onclick="deleteCourse({{ course.id }});">Удалить</a></li>
+                  </ul>
+          </div> -->
+          {% endif %} 
+        </h4>
+         
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-5"><b>Курс: </b></th>
+          <th class="col-lg-7">{{ course.title }}</th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        <tr>
+          <td><b>Предмет: </b></td>
+          <td >{{ course.discipline.title }}</td>
+        </tr>
+         <tr>
+          <td><b>Преподаватель: </b></td>
+          <td >{{ course.teacher.fio }}</td>
+        </tr>
+        <tr>
+          <td><b>Продолжительность: </b></td>
+          <td >с {{ course.start_date.strftime('%d.%m.%Y') }} по {{ course.end_date.strftime('%d.%m.%Y') }}</td>
+        </tr>
+        <tr>
+          <td><b>Стоимость занятия: </b></td>
+          <td > {{course.cost}} р.</td>
+        </tr>
+        <tr>
+          <td><b>Оплата преподавателю: </b></td>
+          <td > {{course.cost}} р.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-lg-7">
+  <h4><b>Расписание занятий</b> 
+          {% if user and user.is_admin%} <a class="btn btn-success" onclick="more('', '', '', '12', '00', '1', '00');"><b>+  ЗАНЯТИЕ</b></a> {% endif %}
+    </h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">Место</th>
+          <th class="col-lg-2">День недели</th>
+          <th class="col-lg-2">Время</th>
+          <th class="col-lg-5" > </th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if timesheets|length == 0%}
+            <tr><td colspan="3" align="center"><b>Не введено ни одно занятие!</b></td></tr>
+        {% endif %}
+        {% for timesheet in timesheets %}
+        <tr id="timesheet{{ timesheet.id }}">
+          <td>{{ timesheet.place.title }}</td>
+          <td>{% if timesheet.dow == 0 %}
+                Понедельник
+              {% elif timesheet.dow == 1 %}
+                Вторник
+              {% elif timesheet.dow == 2 %}
+                Среда
+              {% elif timesheet.dow == 3 %}
+                Четверг
+              {% elif timesheet.dow == 4 %}
+                Пятница
+              {% elif timesheet.dow == 5 %}
+                Суббота
+              {% elif timesheet.dow == 6 %}
+                Воскресенье
+              {% endif%}
+          </td>
+          <td>{{ timesheet.hod }}:{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }} - {{ timesheet.hod + timesheet.hoe}}:{% if (timesheet.moh + timesheet.moe)|string|length != 2 %}0{% endif %}{{ timesheet.moh + timesheet.moe }}</td>
+          {% if user and user.is_admin%}
+          <td class="btn-group btn-group-justified" >
+                  <a  class="btn btn-default" href="#" onclick="more('{{ timesheet.id }}', '{{ timesheet.place.id }}', '{{ timesheet.dow }}', '{{ timesheet.hod }}', '{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}', '{{ timesheet.hoe }}', '{% if timesheet.moe|string|length != 2 %}0{% endif %}{{ timesheet.moe }}');">Редак-ть</a>
+                  <a  class="btn btn-danger" href="#" onclick="  deleteTimesheet('{{ timesheet.id }}'); ">Удалить</a>
+
+
+                  <!-- <a  class="btn btn-success" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Действие</a>
+                  <ul class="dropdown-menu">
+                     <li><a  href="#" onclick="more('{{ timesheet.id }}', '{{ timesheet.place.id }}', '{{ timesheet.dow }}', '{{ timesheet.hod }}', '{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}', '{{ timesheet.hoe }}', '{% if timesheet.moe|string|length != 2 %}0{% endif %}{{ timesheet.moe }}');">Редактировать</a></li>
+                    <li><a  href="#" onclick="deleteTimesheet({{ timesheet.id }});">Удалить</a></li>
+                  </ul> -->
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+
+{% if user and user.is_admin%}
+<div class="modal" id="payment_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Оплата</h4>
+      </div>
+      <form action="" method="POST"  >
+          <div class="modal-body">
+            <fieldset>
+              <input type="hidden" id="modal_payment_id" name="modal_payment_id" value=""/>
+              <input class="form-control" id="lesson_date" name="lesson_date" type="hidden">
+              <input class="form-control" id="student_id" name="student_id" type="hidden"> 
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Дата занятия</label>
+                  <div class="col-lg-9">
+                    <input disabled class="form-control" id="lesson_date_show" name="lesson_date_show" type="text">
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Ученик</label>
+                  <div class="col-lg-9">
+                    <input disabled class="form-control" id="student_fio" name="student_fio" type="text">
+                  </div>
+                </div>
+                 <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Курс</label>
+                  <div class="col-lg-9">
+                    <input disabled value = "{{ course.title }}" class="form-control" id="modal_course_title" name="modal_course_title" type="text">
+                  </div>
+                </div>
+                 <br/><br/>
+
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Сумма</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_pay" name="modal_pay" placeholder="Сумма" type="text">
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Дополнительная плата</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_cost_extra" name="modal_cost_extra" placeholder="Сумма" type="text">
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Комментарий к доп. плате</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_cost_extra_comment" name="modal_cost_extra_comment" placeholder="Комментарий" type="text">
+                  </div>
+                </div>
+            </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button  type="submit" class="btn btn-primary">Оплатить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="time_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Новое занятие</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_timesheet_id" name="modal_timesheet_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Аудитория</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_place" name="modal_place">
+                          {% for place in places %}
+                            <option value="{{ place.id }}">{{ place.title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">День недели</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_dow" name="modal_dow">
+                          <option value="0">Понедельник</option>
+                          <option value="1">Вторник</option>
+                          <option value="2">Среда</option>
+                          <option value="3">Четверг</option>
+                          <option value="4">Пятница</option>
+                          <option value="5">Суббота</option>
+                          <option value="6">Воскресенье</option>
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+
+                    <div class = "col-lg-6">
+                      <h5 style = "text-align: center"> Начало занятий </h5>
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-3 control-label">Часы</label>
+                        <div class="col-lg-9">
+                          <input class="form-control" id="modal_hod" name="modal_hod" placeholder="Часы" type="text">
+                        </div>
+                      </div>
+                    
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-3 control-label">Минуты</label>
+                        <div class="col-lg-9">
+                          <input class="form-control" id="modal_moh" name="modal_moh" placeholder="Минуты" type="text">
+                        </div>
+                      </div>
+                    </div>  
+                     <div class = "col-lg-6">
+                      <h5 style = "text-align: center"> Длительность занятий </h5>
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-3 control-label"> Часы</label>
+                        <div class="col-lg-9">
+                          <input class="form-control" id="modal_hoe" name="modal_hoe" placeholder="Часы" type="text">
+                        </div>
+                      </div>
+                     
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-3 control-label"> Минуты</label>
+                        <div class="col-lg-9">
+                          <input class="form-control" id="modal_moe" name="modal_moe" placeholder="Минуты" type="text">
+                        </div>
+                      </div>
+                    </div>  
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Запись на курс</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_id" name="modal_id" value=""/>
+                    <div class="form-group" id="modal_student_id_field">
+                      <label for="inputEmail" class="col-lg-3 control-label">Ученик</label>
+                      <div class="col-lg-9">
+                        <select data-placeholder="Выберите ученика" id="modal_student_id" name="modal_student_id">
+                          <option></option>
+                          {% for student in all_students %}
+                          <option value="{{ student.id }}">{{ student.fio }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <!-- <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Фио ученика</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_student_cost_fio" name="modal_cost_comment" type="text">
+                      </div>
+                    </div>
+                    <br><br> -->
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Стоимость занятия</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_cost" name="modal_cost" placeholder="Cost" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Комментарий</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_cost_comment" name="modal_cost_comment" placeholder="Комментарий" type="text">
+                      </div>
+                    </div>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal_course">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Курс</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_id_course" name="modal_id_course" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Название</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_title_course" name="modal_title_course" placeholder="Название курса" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Предмет</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_discipline_course" name="modal_discipline_id_course">
+                          {% for discipline in disciplines %}
+                          <option value="{{ discipline.id }}">{{ discipline.title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Преподаватель</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_teacher_course" name="modal_teacher_id_course">
+                          {% for teacher in teachers %}
+                          <option value="{{ teacher.id }}">{{ teacher.fio }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+
+                    <div class = "col-lg-6">
+                      <h5 style = "text-align: center"> Продолжительность курса </h5>
+                      <br>
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-5 control-label">Начало</label>
+                        <div class="col-lg-7">
+                          <input class="form-control" id="modal_start_date_course" name="modal_start_date_course" placeholder="Дата начала курса" type="text">
+                        </div>
+                      </div>
+                    
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-5 ">Окончание</label>
+                        <div class="col-lg-7">
+                          <input class="form-control" id="modal_end_date_course" name="modal_end_date_course" placeholder="Дата окончания курса" type="text">
+                        </div>
+                      </div>
+                    </div>  
+                     <div class = "col-lg-6">
+                      <h5 style = "text-align: center"> Оплата и стоимость </h5>
+                      <br>
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-5 control-label"> Стоимость</label>
+                        <div class="col-lg-6">
+                          <input class="form-control" id="modal_cost_course" name="modal_cost_course" placeholder="Плата преподавателю" type="text">
+                        </div>
+                      </div>
+                     
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-5 control-label"> Оплата</label>
+                        <div class="col-lg-7">
+                          <input class="form-control" id="modal_student_cost_course" name="modal_student_cost_course" placeholder="Стоимость занятия" type="text">
+                        </div>
+                      </div>
+                    </div>  
+
+
+
+
+
+
+
+                    <!-- <div class="form-group col-lg-6">
+                      <label for="inputEmail" class="control-label"></label>
+                      <div class=>
+                        <input class="form-control" id="modal_start_date_course" name="modal_start_date_course" placeholder="Дата начала курса" type="text">
+                      </div>
+                    </div>
+                    <div class="form-group col-lg-6">
+                      <label for="inputEmail" class=" control-label"></label>
+                      <div >
+                        <input class="form-control" id="modal_end_date_course" name="modal_end_date_course" placeholder="Дата окончания курса" type="text">
+                      </div>
+                    </div>
+                    <div class="form-group col-lg-6">
+                      <label for="inputEmail" class=" control-label"></label>
+                      <div >
+                        <input class="form-control" id="modal_cost_course" name="modal_cost_course" placeholder="Плата преподавателю" type="text">
+                      </div>
+                    </div>
+                    <div class="form-group col-lg-6">
+                      <label for="inputEmail" class=" control-label"></label>
+                      <div >
+                        <input class="form-control" id="modal_student_cost_course" name="modal_student_cost_course" placeholder="Стоимость занятия" type="text">
+                      </div> -->
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if user and user.teacher%}
+<div class="modal" id="homework_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Домашнее задание</h4>
+      </div>
+      <form action="" method="POST" onsubmit="primenit(); return true;">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_lesson_id" name="modal_lesson_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Тип</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="homework_id" name="homework_id" onchange="changeType($('#homework_id').val());">
+                          {% for homework in homeworks %}
+                          <option value="{{ homework.id }}">{{ homework.title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Название</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_title" name="modal_title" placeholder="Title" type="text">
+                      </div>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Ученики</label>
+                      <div class="col-lg-9">
+                        <select multiple="" style="height:100px;" class="form-control" id="student_ids" name="student_ids">
+                          {% for student in students %}
+                          <option value="{{ student.student.id }}" selected="">{{ student.student.fio }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <fieldset id="modal_args_field" class="col-lg-12">
+                    </fieldset>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Задать</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="abstract_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Конспект занятия</h4>
+      </div>
+      <form action="" method="POST">
+        <input type="hidden" name="modal_abstract_lesson_id" id="modal_abstract_lesson_id">
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-2 control-label">Тема занятия</label>
+          <div class="col-lg-10">
+            <input class="form-control" id="modal_lesson_title" name="modal_lesson_title" placeholder="Тема" type="text">
+          </div>
+        </div>
+        
+        <div class="modal-body">
+          <fieldset>
+            <textarea class="form-control" id="modal_text" name="modal_text" rows="6"></textarea>
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

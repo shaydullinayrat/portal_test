@@ -1,0 +1,45 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-offset-2 col-lg-8">
+    <div class="well">
+        <form action="" method="post" name="register" class="form-horizontal">
+          <fieldset>
+            <legend>Регистрация</legend>
+            {{form.hidden_tag()}}
+            <div class="form-group">
+              <label for="inputEmail" class="col-lg-2 control-label">Имя пользователя</label>
+              <div class="col-lg-10">
+                {{form.username(size=30,class_='form-control',placeholder ='Имя пользователя')}}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inputPassword" class="col-lg-2 control-label">Пароль</label>
+              <div class="col-lg-10">
+                {{form.password(size=30,class_='form-control',placeholder ='Пароль')}}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inputPassword" class="col-lg-2 control-label">Повторите пароль</label>
+              <div class="col-lg-10">
+                {{form.confirm(size=30,class_='form-control',placeholder ='Пароль')}}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inputEmail" class="col-lg-2 control-label">Эмейл</label>
+              <div class="col-lg-10">
+                {{form.email(size=30,class_='form-control',placeholder ='Эмейл')}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-lg-10 col-lg-offset-2">
+                 <input type="submit" class='btn btn-primary' value="Зарегистрировать">
+              </div>
+            </div>
+          </fieldset>
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

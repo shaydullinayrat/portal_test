@@ -1,0 +1,290 @@
+{% block content %}
+<html style = "height: 100% ; width:100%; ">
+
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="/static/css/custom.min.css">
+    <style>
+      .white_style{
+        background-color: white;
+        opacity: 0.97;
+        border-width:0; 
+        color: black;
+      }
+      .black_style9{
+        background-color: black;
+        opacity: 0.9;
+        border-width:0; 
+        color: white;
+      }
+      .black_style{
+        background-color: black;
+        opacity: 0.8;
+        border-width:0; 
+        color: white;
+      }
+    </style>
+</head>
+<body style = "background-image: url(/static/custom/css/fon_1.jpg); background-position: center center; background-repeat: no-repeat  ; background-size: cover " > 
+
+<div id = "modal_settings" class="modal ">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+         <button onclick = "restart(); return false;"  class="close" tabindex = "-1" type="button" style=" margin-right:20px;"   >♻   </button>
+         <button onclick = "change_background(); return false;"  class="close" tabindex = "-1" type="button" style=" margin-right:20px;"  >☻   </button>
+        <h4 class="modal-title ">Настройки</h4>
+      </div>
+   
+      	<div class="panel-body col-lg-7 col-md-7 col-sm-7">
+        <div class="panel-body" style=" text-align:center"> <h4>Правильность выполнения</h4>
+            <div id = "pravilno_text" style=" text-align:center"> 0 из 0 (0) </div>
+            <div  class="progress progress-striped active">
+                  <div  id = "pravilno_progress" class="progress-bar progress-bar-success" style="width: 0"></div>
+            </div>
+        </div>
+			<div  class="panel-body" style=" text-align:center"> <h4>Сложность</h4>
+				<div class="btn-group btn-group-justified">	
+				    <a  class="btn btn-default active" id = "Button_Kolcifr_1" onclick = "kolcifr_1();return false;">1</a>
+				    <a  class="btn btn-default" id = "Button_Kolcifr_2" onclick = "kolcifr_2();return false;">10</a>
+				    <a  class="btn btn-default" id = "Button_Kolcifr_3" onclick = "kolcifr_3();return false;">100</a>
+				    <a  class="btn btn-default" id = "Button_Kolcifr_4" onclick = "kolcifr_4();return false;">1000</a>
+				</div> 
+			</div>
+
+      <div class="panel-body" style=" text-align:center"> <h4>Интервал (мсек)</h4>
+        <div class="btn-group btn-group-justified"> 
+            <a  class="btn btn-default" onclick = "skorost_minus(); return false;">-</a>
+            <a  class="btn btn-default active" id="Skorost_tablo" onclick = "skorost_1();return false;">1000</a>
+            <a  class="btn btn-default" onclick = "skorost_plus() ;return false;">+</a>
+        </div> 
+      </div>
+      </div>
+
+      <div class="panel-body col-lg-5 col-md-5 col-sm-5">		
+				
+			</div>
+
+      <div class="modal-footer">
+        <div class="panel-body">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Применить</button>     
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-top black_style9" style = "z-index: 2; height: 52" >
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" onclick = "button_nastroyki_f(); return false;">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+     <a tabindex = "-1" class="navbar-brand" href="/games" style = "width: 110px; background:url(/static/custom/css/s5_logo.png) ; background-position: center center; background-repeat: no-repeat; background-size: contain  "></a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav"> 
+ 		   <li class="dropdown">
+          <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Сложность <span id = 'navbar_slojnost'style = "font-size:12">(1000)</span></a>
+          <ul class="dropdown-menu black_style9" role="menu">
+            <li><a href="" onclick = "kolcifr_1();  return false;" >1</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "kolcifr_2();  return false;">10</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "kolcifr_3();  return false;" >100</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "kolcifr_4();  return false;">1000</a></li>
+          </ul>
+        </li>
+
+        <li class="dropdown">
+          <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Интервал <span id = 'navbar_interval' style = "font-size:12">(1сек)</span></a>
+          <ul class="dropdown-menu black_style9" role="menu">
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 10; document.getElementById('navbar_interval').innerHTML = '(10мсек)';  return false;" >10 мсек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 20; document.getElementById('navbar_interval').innerHTML = '(20мсек)';  return false;" >20 мсек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 50; document.getElementById('navbar_interval').innerHTML = '(50мсек)';  return false;" >50 мсек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 100; document.getElementById('navbar_interval').innerHTML = '(100мсек)';  return false;" >100 мсек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 200; document.getElementById('navbar_interval').innerHTML = '(200мсек)';  return false;" >200 мсек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 400; document.getElementById('navbar_interval').innerHTML = '(400мсек)';  return false;" >400 мсек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 700; document.getElementById('navbar_interval').innerHTML = '(700мсек)';  return false;" >700 мсек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 1000; document.getElementById('navbar_interval').innerHTML = '(1сек)';  return false;" >1 сек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 1500; document.getElementById('navbar_interval').innerHTML = '(1.5сек)';  return false;" >1.5 сек</a></li>
+            <li class="divider"></li>
+            <li><a href="" onclick = "document.getElementById('Skorost_tablo').innerHTML = 2000; document.getElementById('navbar_interval').innerHTML = '(2сек)';  return false;" >2 сек</a></li>
+          </ul>
+        </li>
+
+        <li class="dropdown">
+          <a onclick = "black_brown()" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Цвет <span id = 'navbar_color'style = "font-size:12">(коричневый)</span></a>
+        </li>
+
+        <li class="dropdown">
+          <a onclick = "show_abakus(); return false;" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Режим <span style = "font-size:12">(абакус)</span></a>
+        </li>
+      </ul>
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+        <ul class="nav navbar-nav" >
+              <div id = "navbar_pravilno_text" style=" text-align:center"> Правильно 0 из 0 (0) </div>
+              <div  class="progress progress-striped active black_style9" style="margin-bottom:0; ">
+                    <div  id = "navbar_pravilno_progress" class="progress-bar progress-bar-success" style="width: 0%"></div>
+              </div>
+        </ul>
+          <div class="btn-group">
+          <a onclick = "change_background(); return false;"  class="btn btn-default black_style9" tabindex = "-1" style = "font-size: 25; height: 50; width:50">☻   </a>
+          <a  tabindex = "-1" id = "button_restart" class="btn btn-default black_style9" onclick = "restart(); return false;" style = "font-size: 25; height: 50; width:50">♻</a>
+          <a  tabindex = "-1" id = "button_start" class="btn btn-default black_style9"  onclick = "start_2(); return false;" style = "font-size: 25; height: 50; width:50">►</a>
+          <a  tabindex = "-1" id = "button_nastroyki" class="btn btn-default black_style9" onclick = "button_nastroyki_f(); return false;"style = "font-size: 25; height: 50; width:50; ">&#9776</a>
+          </div>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container" style = "width:70vw" >					    
+<div  class="row " >
+<div id = "window_pusto_left" class="col-lg-3 col-md-3 col-sm-2">
+</div>  
+<div id = "window_otvet_up" class="col-lg-6 col-md-6 col-sm-8">  
+  <div id = "window_otvet" class="panel panel-primary white_style" style=" margin-bottom:0">
+      <div class="panel-heading">
+          <h3  class="panel-title" style=" text-align:center"></h3>
+      </div>
+
+    <div  id = "abakus">    
+      <div class="btn-group btn-group-justified ">
+        <a id = "r4_number"   class="razrad_4 btn btn-lg btn-default disabled" style = "border:0; font-size:60; color: #000000; height: 50; background-color: #ffffff">0</a>
+        <a id = "r3_number"   class="razrad_3 btn btn-lg btn-default disabled" style = "border:0; font-size:60; color: #000000; height: 50; background-color: #ffffff">0</a>
+        <a id = "r2_number"   class="razrad_2 btn btn-lg btn-default disabled" style = "border:0; font-size:60; color: #000000; height: 50; background-color: #ffffff">0</a>
+        <a id = "r1_number"   class="razrad_1 btn btn-lg btn-default disabled" style = "border:0; font-size:60; color: #000000; height: 50; background-color: #ffffff">0</a>
+        <a id = "r0_number" class="sprava_pusto hidden btn btn-lg btn-default disabled" style = "visibility: hidden; border:0;  color: #000000; height: 50; background-color: #ffffff">0</a>
+      </div>
+      <div class="btn-group btn-group-justified">
+        <a  class="razrad_4 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+        <a  class="razrad_3 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+        <a  class="razrad_2 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+        <a  class="razrad_1 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+        <a  class="sprava_pusto hidden btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+      </div> 
+       <div class="btn-group btn-group-justified">
+        <a name = "1" onclick =  "r4_brat_0_f(); return false;" id = "r4_brat_0"  class="razrad_4 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%; "></a>
+         <a name = "1" onclick =  "r3_brat_0_f(); return false;" id = "r3_brat_0"  class="razrad_3 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%; "></a>
+         <a name = "1" onclick =  "r2_brat_0_f(); return false;" id = "r2_brat_0"  class="razrad_2 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%; "></a>
+         <a name = "1" onclick =  "r1_brat_0_f(); return false;" id = "r1_brat_0"  class="razrad_1 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%; "></a>
+         <a class="sprava_pusto hidden btn btn-lg btn-default" style = "visibility: hidden; border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%; "></a>
+      </div> 
+       <div class="btn-group btn-group-justified">
+        <a name = "0" onclick =  "r4_brat_f(); return false;" id = "r4_brat"   class="razrad_4 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;"></a>
+        <a name = "0" onclick =  "r3_brat_f(); return false;" id = "r3_brat"   class="razrad_3 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;"></a>
+        <a name = "0" onclick =  "r2_brat_f(); return false;" id = "r2_brat"   class="razrad_2 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;"></a>
+        <a name = "0" onclick =  "r1_brat_f(); return false;" id = "r1_brat"   class="razrad_1 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;"></a>
+        <a class="sprava_pusto hidden btn btn-lg btn-default" style = "visibility: hidden; border:0; padding-top: 7%;background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;"></a>
+      </div> 
+       <div class="btn-group btn-group-justified">
+        <a  onclick =  "r4_spica_0(); return false;" class="razrad_4 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+        <a  onclick =  "r3_spica_0(); return false;" class="razrad_3 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+        <a  onclick =  "r2_spica_0(); return false;" class="razrad_2 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+        <a  onclick =  "r1_spica_0(); return false;" class="razrad_1 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+        <a class="sprava_pusto hidden btn btn-xs btn-default" style = "visibility: hidden; background-color: #000000; border-color: #000000 "></a>
+      </div> 
+       <div class="btn-group btn-group-justified">
+        <a name = "0" onclick =  "r4_drug_1_f(); return false;" id = "r4_drug_1"   class="razrad_4 btn btn-lg btn-default" style = "border:0; padding-top: 7%; background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;  ;"></a>
+        <a name = "0" onclick =  "r3_drug_1_f(); return false;" id = "r3_drug_1"   class="razrad_3 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;"></a>
+        <a name = "0" onclick =  "r2_drug_1_f(); return false;" id = "r2_drug_1"   class="razrad_2 btn btn-lg btn-default" style = "border:0; padding-top: 7%; background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;  ;"></a>
+        <a name = "0" onclick =  "r1_drug_1_f(); return false;" id = "r1_drug_1"   class="razrad_1 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;"></a>
+        <a class="sprava_pusto hidden btn btn-lg btn-default" style = "visibility: hidden; border:0; padding-top: 7%;background: url(/static/custom/css/buspus.png) ; background-position: top center; background-repeat: no-repeat; background-size: contain;"></a>
+      </div> 
+       <div class="btn-group btn-group-justified">
+            <a name = "1" onclick =  "r4_drug_2_f(); return false;" id = "r4_drug_2"   class="razrad_4 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+           <a name = "1" onclick =  "r3_drug_2_f(); return false;" id = "r3_drug_2"   class="razrad_3 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+           <a name = "1" onclick =  "r2_drug_2_f(); return false;" id = "r2_drug_2"   class="razrad_2 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+           <a name = "1" onclick =  "r1_drug_2_f(); return false;" id = "r1_drug_2"   class="razrad_1 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+           <a class="sprava_pusto hidden btn btn-lg btn-default" style = "visibility: hidden; border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+      </div> 
+      <div class="btn-group btn-group-justified">
+        <a name = "1" onclick =  "r4_drug_3_f(); return false;" id = "r4_drug_3"   class="razrad_4 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a name = "1" onclick =  "r3_drug_3_f(); return false;" id = "r3_drug_3"   class="razrad_3 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a name = "1" onclick =  "r2_drug_3_f(); return false;" id = "r2_drug_3"   class="razrad_2 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a name = "1" onclick =  "r1_drug_3_f(); return false;" id = "r1_drug_3"   class="razrad_1 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a class="sprava_pusto hidden btn btn-lg btn-default" style = "visibility: hidden; border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+      </div>  
+      <div class="btn-group btn-group-justified">
+        <a name = "1" onclick =  "r4_drug_4_f(); return false;" id = "r4_drug_4"   class="razrad_4 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a name = "1" onclick =  "r3_drug_4_f(); return false;" id = "r3_drug_4"   class="razrad_3 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a name = "1" onclick =  "r2_drug_4_f(); return false;" id = "r2_drug_4"   class="razrad_2 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a name = "1" onclick =  "r1_drug_4_f(); return false;" id = "r1_drug_4"   class="razrad_1 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a class="sprava_pusto hidden btn btn-lg btn-default" style = "visibility: hidden; border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+      </div>
+      <div class="btn-group btn-group-justified"> 
+        <a name = "1" onclick =  "r4_drug_5_f(); return false;" id = "r4_drug_5"  class="razrad_4 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100% ;"></a>
+        <a name = "1" onclick =  "r3_drug_5_f(); return false;" id = "r3_drug_5"  class="razrad_3 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a name = "1" onclick =  "r2_drug_5_f(); return false;" id = "r2_drug_5"  class="razrad_2 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100% ;"></a>
+        <a name = "1" onclick =  "r1_drug_5_f(); return false;" id = "r1_drug_5"  class="razrad_1 btn btn-lg btn-default" style = "border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+        <a class="sprava_pusto hidden btn btn-lg btn-default" style = "visibility: hidden; border:0; padding-top: 7%;background: url(/static/custom/css/bus-schot-no.png) ; background-position: top center; background-repeat: no-repeat; background-size: 100% 100%;"></a>
+      </div>   
+      <div class="btn-group btn-group-justified"> 
+         <a  class="razrad_4 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+         <a  class="razrad_3 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+         <a  class="razrad_2 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+         <a  class="razrad_1 btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+         <a  class="sprava_pusto hidden btn btn-xs btn-default" style = "background-color: #000000; border-color: #000000 "></a>
+      </div>  
+      </div>
+     </div> 
+      <div class="btn-group btn-group-justified" >
+         <input  class="form-control black_style" id="Editbox_otvet" type="text" value="" style="font-size:130; text-align: center; height:130px; "  autofocus>
+      </div>
+        <div class=" hidden-lg hidden-md hidden-sm col-xs-12" style = "opacity:0.9" >
+        <div class="btn-group btn-group-justified"> 
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 1; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">1</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 2; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">2</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 3; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">3</a>
+         </div> 
+         <div class="btn-group btn-group-justified"> 
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 4; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">4</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 5; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">5</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 6; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">6</a>
+         </div> 
+         <div class="btn-group btn-group-justified"> 
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 7; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">7</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 8; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">8</a>
+          <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 9; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">9</a>
+         </div> 
+          <div class="btn-group btn-group-justified"> 
+            <a id = "button_calc_start" onclick = "start_2(); return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">►</a>
+            <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value += 0; return false;" class="btn btn-default btn-lg" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">0</a>
+            <a  onclick = "if (document.getElementById('button_start').innerHTML == '✐') Editbox_otvet.value = ( Editbox_otvet.value < 10 ? '' : parseInt(Editbox_otvet.value/10)); return false;" class="btn btn-default" style = "background-color: black; border-color: DimGray; border-width: 1; color: white">←</a>
+          </div>
+      </div>  
+    </div>
+
+</div>  
+</div>
+
+<script src = "/static/custom/js/Menar-flash-cw.js">
+</script>
+    <script src="/static/js/jquery-1.10.2.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/custom.js"></script>
+	 
+</body>
+
+</html>
+{% endblock %}

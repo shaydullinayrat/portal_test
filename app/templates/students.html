@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}<script>
+function deleteStudent(id) {
+    if (confirm('Вы уверены?')){
+      // Example of client side AJAX
+      // function uses jQuery to send async request to server (into '/sayhello' address)
+      $.post('{{ url_for("delete_student") }}', {
+          // params, that will be send as 'POST'
+          id: id
+      }).done(function(data) {
+          // actions, that will be done after successfull response
+          if (data.res == 1){
+              com = '#' + id
+              $(com).hide()
+          }
+      }).fail(function() {
+          // actions, that will be done after UNsuccessfull response
+          alert('error')
+      });
+    }
+}
+function more(id, username, password, email, fio, parent, phone, age){
+    $('#modal_id').val(id);
+    $('#modal_username').val(username);
+    $('#modal_password').val(password);
+    $('#modal_email').val(email);
+    $('#modal_fio').val(fio);
+    $('#modal_parent').val(parent);
+    $('#modal_phone').val(phone);
+    $('#modal_age').val(age);
+    $('#modal').modal('show');
+}
+</script>
+<div class="row">
+    <h3><b>Ученики</b>
+      <a class="btn btn-success" onclick="more('', '', '1234', '', '');"><b>+ ДОБАВИТЬ УЧЕНИКА</b></a>
+    </h3>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-2">ФИО</th>
+          <th class="col-lg-1">Логин</th>
+          <th class="col-lg-1">Родители</th>
+          <th class="col-lg-2">Телефон</th>
+          <th class="col-lg-1">Возраст</th>
+          <th class="col-lg-1">Класс</th>
+          <th class="col-lg-3"></th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        <tr>
+          <form action="" method="POST">
+              <td><input class="form-control" type="text" name="fio" value="{{ request.form.fio }}" /></td>
+              <td><input class="form-control" type="text" name="username" disabled="" /></td>
+              <td><input class="form-control" type="text" name="parent" value="{{ request.form.parent }}" /></td>
+              <td><input class="form-control" type="text" name="phone" value="{{ request.form.phone }}" /></td>
+              <td><input class="form-control" type="text" name="age" disabled="" /></td>
+              <td><input class="form-control" type="text" name="age" disabled="" /></td>
+              <td><button type="submit" class="btn btn-primary btn-block">Поиск</button></td>
+          </form>
+        </tr>
+        {% if students|length == 0%}
+            <tr><td colspan="5" align="center"><b>Список учеников пуст!</b></td></tr>
+        {% endif %}
+        {% for student in students%}
+        <tr id="{{ student.id }}">
+          <td><a href="{{ url_for('show_student', student_id=student.id) }}">{{ student.fio }}</a></td>
+          <td>{{ student.user.username }} / {{ student.user.email if student.user.email else '-' }}</td>
+          <td>{{ student.parent }}</td>
+          <td>{{ student.phone }}</td>
+          <td>{% if student.myage() != 0%} {{ student.myage() }} {% endif %}</td>
+          <td>{% if student.myage() != 0%} {{ student.myclass()-1 if student.myclass() > 1 else '1'}}-{{ student.myclass()+1 if student.myclass() < 11 else '11' }} класс {% endif %}</td>
+          <td class="btn-group btn-group-justified">
+            <a class="btn btn-default" onclick="more('{{ student.id }}', '{{ student.user.username }}', '{{ student.user.password }}', '{{ student.user.email }}', '{{ student.fio }}', '{{ student.parent }}', '{{ student.phone }}', {% if student.age.strftime('%d.%m.%Y') != '01.01.1900' %} '{{ student.age.strftime('%d.%m.%Y') }}' {% else%} '' {% endif%} );">Редактировать</a>
+            <a class="btn btn-danger" onclick="deleteStudent({{ student.id }});">Удалить</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<div class="modal" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Ученик</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_id" name="modal_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">ФИО</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_fio" name="modal_fio" placeholder="FIO" type="text">
+                      </div>
+                    </div>
+                     <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Логин</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_username" name="modal_username" placeholder="Имя пользователя" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Пароль</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_password" name="modal_password" placeholder="Пароль" type="password" value="1234">
+                      </div>   
+                    <br><br>
+                     <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Телефон</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_phone" name="modal_phone" placeholder="Phone No" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Дата рождения</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_age" name="modal_age" placeholder="Birth Date" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Родители</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_parent" name="modal_parent" placeholder="Parent" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Email</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_email" name="modal_email" placeholder="Email" type="text">
+                      </div>
+                    </div>
+                   
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+  <div id="modal_start_date"></div>
+  <div id="modal_end_date"></div>
+</div>
+{% endblock %}

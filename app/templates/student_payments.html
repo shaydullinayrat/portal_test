@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript">
+    function clears(){
+        $('#modal_start_date').val('{{ sdate }}')
+        $('#modal_end_date').val('{{ edate }}')
+    }
+</script>
+<div class="row">
+    <h3><b>Оплата</b></h3>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-4">Курс</th>
+          <th class="col-lg-4">Дата</th>
+          <th class="col-lg-4">Внесено</th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if user.student.payments.all()|length == 0%}
+            <tr><td colspan="3" align="center"><b>Оплата ни разу не производилась!</b></td></tr>
+        {% endif %}
+        {% for payment in user.student.payments.all() %}
+          <tr>
+            <td>{{ payment.course.title }}</td>
+            <td>{{ payment.date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ payment.amount }} р.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br/><br/>
+    <h4><b>Расчет оплаты</b></h4>
+    <div class="" id="students">
+      <form action="" method="POST">
+          <div class="col-lg-6">
+              <div class="form-group">
+                <label class="control-label" for="inputDefault">Начальная дата периода</label>
+                <input class="form-control" id="modal_start_date" name="modal_start_date" type="text" placeholder="Start date" value="{{ request.form.modal_start_date if request.form.modal_start_date else sdate }}">
+              </div>
+          </div>
+          <div class="col-lg-6">
+              <div class="form-group">
+                <label class="control-label" for="inputDefault">Конечная дата периода</label>
+                <input class="form-control" id="modal_end_date" name="modal_end_date" type="text" placeholder="End date" value="{{ request.form.modal_end_date if request.form.modal_end_date else edate }}">
+              </div>
+          </div>
+          <div class="form-group pull-right">
+            <div class="col-lg-3 col-lg-offset-9">
+              <a class="btn btn-default" onclick="clears();">Очистить</a>
+              <button type="submit" class="btn btn-primary">Посчитать</button>
+            </div>
+          </div>
+      </form>
+      {% if result %}
+          <table class="table table-striped table-hover panel panel-primary">
+            <thead class="panel-heading">
+              <tr>
+                <th class="col-lg-2">Курс</th>
+                <th class="col-lg-1">Стоимость одного занятия</th>
+                <th class="col-lg-2">Посещенные занятия + неув.прич(все занятия)</th>
+                <th class="col-lg-2">Плата за проведенные занятия (Планируемая оплата)</th>
+                <th class="col-lg-2">Внесенная оплата этого периода (остаток с прошлого периода)</th>
+                <th class="col-lg-2">Долг на этот период</th>
+              </tr>
+            </thead>
+            <tbody class="panel-body">
+              {% if result|length == 0%}
+                  <tr><td colspan="5" align="center"><b>Нет ни одного предмета</b></td></tr>
+              {% endif %}
+              {% for res in result%}
+              <tr>
+                <td><a href="{{ url_for('show_student_course', course_id=res.course.id) }}">{{ res.course.title }}</a></td>
+                <td>{{ res.cost }} р.</td>
+                <td>{{ res.pres }} + {{ res.not_pres }} ({{ res.alll }})</td>
+                <td><b>{{ res.cost * (res.pres + res.not_pres)  }} р.</b>({{ res.cost * (res.alll) }} р.)</td>
+                <td>{{ res.this_month_payments }} р.({{ res.prev_month_payments }} р.)</td>
+                <td>{{ res.debt }} р.</td>
+              </tr>
+              {% endfor %}
+              {% if result|length != 0%}
+              <tr>
+                <td><b>Суммарно: </b></td>
+                <td colspan="2"></td>
+                <td><b>{{ summ_done }} р.</b> ({{ summ_all }} р.)</td>
+                <td></td>
+                <td><b>{{ summ_debt }} р.</b></td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+      {% endif %}
+    </div>
+</div>
+{% endblock %}

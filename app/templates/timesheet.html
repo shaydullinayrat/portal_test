@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% block content %}
+{% if user and user.is_admin%}
+<script>
+function deleteTimesheet(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_timesheet") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#timesheet' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+
+function more(id, course_id, place, dow, hod, moh, hoe, moe){
+    $('#modal_timesheet_id').val(id);
+    $('#modal_course_id').val(course_id);
+    $('#modal_place').val(place);
+    $('#modal_dow').val(dow);
+    $('#modal_hod').val(hod);
+    $('#modal_moh').val(moh);
+    $('#modal_hoe').val(hoe);
+    $('#modal_moe').val(moe);
+    $('#modal').modal('show');
+}
+
+</script>
+{% endif %}
+<div class="row">
+    {% if user and user.is_admin or user.teacher %}
+  <h3><b>Расписание занятий</b>
+    {% if user and user.is_admin %}<a class="btn btn-success" onclick="more('', '', '', '', '12', '00', '13', '00');"><b>+ ДОБАВИТЬ ЗАНЯТИЕ</b></a>{% endif %}
+  </h3>
+    <table class="table table-striped table-hover  panel panel-primary">
+      <thead class="panel-heading">
+        {% if user and user.is_admin%}
+        <tr>
+          <th class="col-lg-3">Курс</th>
+          <th class="col-lg-3">Преподаватель</th>
+          <th class="col-lg-1">Время</th>
+          <th class="col-lg-1">Аудитория</th>
+          <th class="col-lg-3"></th>
+        </tr>
+        {% elif user and user.teacher%}
+        <tr>
+          <th class="col-lg-4">Курс</th>
+          <th class="col-lg-3">Время</th>
+          <th class="col-lg-2">Аудитория</th>
+          <th class="col-lg-3"></th>
+        </tr>
+        {% endif %}
+      </thead>
+      <tbody class="panel-body">
+        {% if user and user.is_admin or user.teacher%}
+        <tr>
+          <form action="" method="POST">
+              <td>
+                <select class="form-control" id="course_id" name="course_id" onchange='this.form.submit()' >
+                  <option value=""></option>
+                  {% for course in courses %}
+                  <option value="{{ course.id }}"
+                    {% if course.id|string == request.form.course_id|string %} selected="selected"{% endif %}>{{ course.title }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              {% if user and user.is_admin%}
+              <td>
+                <select class="form-control" id="teacher_id" name="teacher_id" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  {% for teacher in teachers %}
+                  <option value="{{ teacher.id }}"
+                    {% if teacher.id|string == request.form.teacher_id|string %} selected="selected"{% endif %}>{{ teacher.fio }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              {% endif %}
+              <td>
+                <select class="form-control" id="dow" name="dow" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  <option value="0" {% if request.form.dow == '0' %} selected="selected"{% endif %}>
+                  Понедельник</option>
+                  <option value="1" {% if request.form.dow == '1' %} selected="selected"{% endif %}>
+                  Вторник</option>
+                  <option value="2" {% if request.form.dow == '2' %} selected="selected"{% endif %}>
+                  Среда</option>
+                  <option value="3" {% if request.form.dow == '3' %} selected="selected"{% endif %}>
+                  Четверг</option>
+                  <option value="4" {% if request.form.dow == '4' %} selected="selected"{% endif %}>
+                  Пятница</option>
+                  <option value="5" {% if request.form.dow == '5' %} selected="selected"{% endif %}>
+                  Суббота</option>
+                  <option value="6" {% if request.form.dow == '6' %} selected="selected"{% endif %}>
+                  Воскресенье</option>
+                </select>
+              </td>
+               <td>
+                <select class="form-control" id="dow" name="place" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  {% for place in places %}
+                    <option value="{{ place.id }}"{% if place.id|string == request.form.place|string %} selected="selected"{% endif %}>{{ place.title }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td>
+              {% if user and user.is_admin%}
+                <button onclick = "document.getElementById('dow').options[0].selected=true; document.getElementById('teacher_id').options[0].selected=true; document.getElementById('course_id').options[0].selected=true; document.getElementById('place').options[0].selected=true;" type="submit" class="btn btn-primary btn-block">Удалить фильтры</button>
+                {% elif user and user.teacher%}
+                <button onclick = "document.getElementById('dow').options[0].selected=true; document.getElementById('course_id').options[0].selected=true; document.getElementById('place').options[0].selected=true;" type="submit" class="btn btn-primary btn-block ">Удалить фильтры</button>
+                {% endif%}
+                </td>
+          </form>
+        </tr>
+        {% endif %}
+        {% if timesheets|length == 0%}
+            <tr><td colspan="5" align="center"><b>Нет ни одного занятия!</b></td></tr>
+        {% endif %}
+        {% for timesheet in timesheets%}
+        <tr id="timesheet{{ timesheet.id }}">
+          <td>
+            <a href="{{ url_for('show_course', course_id=timesheet.course_id) if user.is_admin or user.teacher else url_for('show_student_course', course_id=timesheet.course_id) }}"><b>{{ timesheet.course.title }}</b></a>
+          </td>
+          {% if user and user.is_admin%}
+          <td >
+            {% if user and user.is_admin %}<a href="{{ url_for('show_teacher_payments') }}">{{ timesheet.course.teacher.fio }}</a>{% else %}{{ timesheet.course.teacher.fio }}{% endif %}
+            {% if timesheet.course.teacher.phone %}({{timesheet.course.teacher.phone }}){% endif %}
+          </td>
+          {% endif %}
+          <td>{% if timesheet.dow == 0 %}
+                Пн
+              {% elif timesheet.dow == 1 %}
+                Вт
+              {% elif timesheet.dow == 2 %}
+                Ср
+              {% elif timesheet.dow == 3 %}
+                Чт
+              {% elif timesheet.dow == 4 %}
+                Пт
+              {% elif timesheet.dow == 5 %}
+                Сб
+              {% elif timesheet.dow == 6 %}
+                Вск
+              {% endif%}
+              {{ timesheet.hod }}:{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}
+          </td>
+          <td>{{ timesheet.place.title }}</td>
+          <td class="btn-group btn-group-justified">
+            {%if user and user.is_admin%}
+            <a class="btn btn-default" onclick="more('{{ timesheet.id }}', '{{ timesheet.course_id }}', '{{ timesheet.place.id }}', '{{ timesheet.dow }}', '{{ timesheet.hod }}', '{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}','{{ timesheet.hoe }}', '{% if timesheet.moe|string|length != 2 %}0{% endif %}{{ timesheet.moe }}');">Редактировать</a>
+            <a class="btn btn-danger" onclick="deleteTimesheet({{ timesheet.id }});">Удалить</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% if user and user.is_admin%}
+<div class="modal" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Занятие</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_timesheet_id" name="modal_timesheet_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Курс</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_course_id" name="modal_course_id">
+                          <option value=""></option>
+                          {% for course in courses %}
+                          <option value="{{ course.id }}">{{ course.title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Аудитория</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_place" name="modal_place">
+                          {% for place in places %}
+                            <option value="{{ place.id }}">{{ place.title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">День недели</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_dow" name="modal_dow">
+                          <option value="0">Понедельник</option>
+                          <option value="1">Вторник</option>
+                          <option value="2">Среда</option>
+                          <option value="3">Четверг</option>
+                          <option value="4">Пятница</option>
+                          <option value="5">Суббота</option>
+                          <option value="6">Воскресенье</option>
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Часы</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_hod" name="modal_hod" placeholder="Hour" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Минуты</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_moh" name="modal_moh" placeholder="Minutes" type="text">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Часы конец</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_hoe" name="modal_hoe" placeholder="Hour" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Минуты конец</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_moe" name="modal_moe" placeholder="Minutes" type="text">
+                      </div>
+                    </div>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

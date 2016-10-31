@@ -1,0 +1,40 @@
+<meta charset="utf-8">
+<title>{{ title }}</title>
+<link rel="stylesheet" href="/static/css/bootstrap.min.css" media="screen">
+<link rel="stylesheet" href="/static/css/custom.min.css">
+<script src="/static/js/jquery-1.10.2.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/custom.js"></script>
+<script type="text/javascript">
+    var d = new Date();
+    var start = d.getTime();
+    function send_answer(points, text) {
+        d = new Date();
+        end = d.getTime();
+        {% if task_id %}
+        $.post('{{ url_for("send_task_answer") }}', {
+            task_id: {{ task_id }},
+            points: points,
+            student_answer: text,
+            duration: d.toLocaleDateString()
+        }).done(function(data) {
+            if (data.res == 1){
+                alert('Сохранено!')
+                window.location.href = "{{ url_for('show_student_tasks') }}"
+            }else{
+                alert('Ошибка сохранения!')                
+            }
+        }).fail(function() {
+            alert('error')
+        });
+        {% else %}
+        alert(points)
+        alert(text)
+        alert((end - start)/1000)
+        {% endif %}
+    }
+</script>
+<div style="margin: -50px 0 0 0px;">
+    {{ text|safe }}
+</div>

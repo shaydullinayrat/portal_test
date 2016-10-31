@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" style = "height:100%">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link rel="stylesheet" href="/static/css/bootstrap2.css" media="screen">
+    <!-- <link rel="stylesheet" href="/static/css/custom.min.css"> -->
+
+<!--     <link rel="stylesheet" href="http://bootswatch.com/cerulean/bootstrap.css" media="screen">
+    <link rel="stylesheet" href="http://bootswatch.com/assets/css/bootswatch.min.css">  -->
+
+    <link rel="stylesheet" href="/static/custom/css/daterangepicker.css">
+    <link rel="stylesheet" href="/static/custom/css/chosen.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../bower_components/html5shiv/dist/html5shiv.js"></script>
+      <script src="../bower_components/respond/dest/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+    .can-check-presence{
+        background-color: #ffffbd;
+      }
+    .red-danger{
+        background-color: #e55137;
+        color: white ;
+      }  
+    </style>
+  </head>
+  <body style = "height:95%">
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand"  href="/index"    style = "width: 110px; background:url(/static/custom/css/logo_rus.png) center center no-repeat; background-size: contain  "></a>
+          <!--<a href="/index" class="navbar-brand"><b>MegaSmart</b></a>-->
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <button  type="button" onclick="history.back(); return false;" class="navbar-toggle" style = "color:grey"> ⇧
+          </button>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav">
+          {%if user and user.is_admin%}
+            <li><a href="{{ url_for('show_students') }}">Ученики</a></li>
+            <li><a href="{{ url_for('show_courses') }}">Курсы</a></li>
+            <li><a href= "{{ url_for('show_timesheet')}}">Расписание</a></li>          
+          {% elif user and user.teacher %}
+            <li><a href="{{ url_for('show_teachers_profile') }}">Мои курсы</a></li>
+            <li><a href="/lessonsheet">Мое расписание</a></li>
+            <li><a href="/documents">Учебные материалы</a></li> 
+            <li><a href="/games">Игры Абакус</a></li> 
+          {% elif user and user.student %}
+            <li><a href="{{ url_for('show_student_profile') }}">Мой профиль</a></li>
+            <li><a href="{{ url_for('show_student_tasks') }}">Мои домашние задания</a></li> 
+            <li><a href="/games">Игры Абакус</a></li> 
+          {%endif%} 
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            {% if user and user.student %}
+              <li><a href="{{ url_for('show_student_payment') }}">Оплата</a></li>
+            {%endif%}
+            {% if user and user.is_admin %}
+             <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="resource">Ресурсы<span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="resource">
+                <li><a href= "{{ url_for('show_places')}}">Центры</a></li> 
+                <li><a href="{{ url_for('show_disciplines') }}">Предметы</a></li>
+                <li><a href="{{ url_for('show_teachers') }}">Преподаватели</a></li>
+              </ul> 
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="additional">Доп<span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="additional">
+                <li><a href="/documents">Учебные материалы</a></li> 
+                <li><a href="/games">Игры Абакус</a></li> 
+                <li><a href="{{ url_for('show_homeworks')}}">Заготовки ДЗ</a></li>
+              </ul> 
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">Отчеты<span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="download">
+                <li><a href="{{ url_for('show_teacher_payments') }}">Плата преподавателям</a></li>
+                <li><a href="{{ url_for('show_student_payments') }}">Плата учеников</a></li>
+              </ul>
+            </li>   
+            {%endif%}
+            {%if user and user.is_authenticated%}
+                <li><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">
+                    {{user.username}}<span class="caret"></span></a>
+                    <ul class="dropdown-menu" aria-labelledby="themes">
+                      {% if user.is_superuser %}
+                        <li><a href="/register" >Регистрация</a></li>
+                      {% endif %}
+                      <li><a href="{{ url_for('change_password') }}">Поменять пароль</a></li>
+                      <li><a href="/logout">Выход</a></li>
+                    </ul>
+                    <li><a onclick="history.back(); return false;" class="btn btn-success" style = "color:white" >⇧</a></li>
+                </li>
+            {%else%}
+              <li><a href="/login">Вход</a></li>
+            {%endif%}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container" style="margin-top: 20px; display:table; height: 100%;" >
+
+      <div class="row" >
+        <div class = "panel-body"></div>
+        <div class = "panel-body"></div>
+        <div class="col-lg-12">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-dismissible {% if category == 'message' %}alert-info              {% else %}alert-warning{% endif %}">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+
+      <div class="bs-docs-section" style = "display: table-row; height: 100%;">
+      {% block content %}{% endblock %}
+      </div>
+
+      <footer >
+        <div class="row" style=" margin-bottom:20px;">
+        <legend></legend>
+          <div>
+            <ul class="list-unstyled">
+              <!-- <li class="pull-left"><a href="mailto:ramil.gata@gmail.com"><b>Yaugear 2016</b></a></li> -->
+              <li class="pull-left"><b>© 2016 ЦДО </b><a href="http://abakus-center.ru"><b>«Абакус-центр»</b></a></li>
+              <li class="pull-right">
+                <a href="http://abakus-center.ru"><b style = "margin-right:20px"> Наш сайт </b></a></a> <a href="/support"><b style = "margin-right:20px"> Служба поддержки </b></a>
+                <a  href="mailto:ramil.gata@gmail.com"><b> О системе </b></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+    </div>
+  
+    <script src="/static/js/jquery-1.10.2.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+    <script src="/static/custom/js/moment.min.js"></script>
+    <script src="/static/custom/js/jquery.daterangepicker.js"></script>
+    <script src="/static/custom/js/data_picker.js"></script>
+
+    <script src="/static/custom/js/chosen.jquery.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $('#modal_student_id').chosen({width:"100%", no_results_text:'Не найдено'});
+    </script>
+
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/custom.js"></script>
+
+
+</body>
+</html>

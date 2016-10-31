@@ -1,0 +1,202 @@
+{% block content %}
+<html style = "height: 100% ; width:100%; ">
+
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="/static/css/custom.min.css">
+    <style>
+      .white_style{
+        background-color: white;
+        opacity: 0.94;
+        border-width:0; 
+        color: black;
+      }
+      .black_style9{
+        background-color: black;
+        opacity: 0.9;
+        border-width:0; 
+        color: white;
+      }
+      .black_style{
+        background-color: black;
+        opacity: 0.8;
+        border-width:0; 
+        color: white;
+      }
+    </style>
+</head>
+<body style = "background-image: url(/static/custom/css/fon_1.jpg); background-position: center center; background-repeat: no-repeat; background-size: cover ;"> 
+
+
+<nav class="navbar navbar-default navbar-fixed-top black_style9" style = "z-index: 2; margin-bottom:0; height: 52" >
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target = "bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a tabindex = "-1" class="navbar-brand" href="/games" style = "width: 110px; background:url(/static/custom/css/s5_logo.png) ; background-position: center center; background-repeat: no-repeat;  background-size: contain  "></a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav col-lg-3 col-md-2 col-sm-2">
+      </ul>
+      <ul class="nav navbar-nav"> 
+        <div class="btn-group">
+          <a onclick = "body_code_minus(); return false;"  class="btn btn-default black_style9" tabindex = "-1" style = "font-size: 25; height: 50; width:65">◅  </a>
+          <a id = "body_code_tablo" onclick = " return false;"  class="btn btn-default black_style9" tabindex = "-1" style = "font-size: 25; height: 50; width:65">1  </a>
+          <a onclick = "body_code_plus(); return false;"  class="btn btn-default black_style9" tabindex = "-1" style = "font-size: 25; height: 50; width:65">▻   </a>
+
+           <a  tabindex = "-1" id = "button_start" class="btn btn-default black_style9"  onclick = "start_2(); return false;" style = "font-size: 25; height: 50; width:100">►</a>
+
+          <a onclick = "skorost_minus(); return false;"  class="btn btn-default black_style9" tabindex = "-1" style = "font-size: 25; height: 50; width:65">⋘  </a>
+          <a id = "skorost_tablo" onclick = " return false;"  class="btn btn-default black_style9" tabindex = "-1" style = "font-size: 25; height: 50; width:65">1  </a>
+          <a onclick = "skorost_plus(); return false;"  class="btn btn-default black_style9" tabindex = "-1" style = "font-size: 25; height: 50; width:65">⋙   </a>
+         
+         
+          </div>
+
+        </ul>
+      <ul class="nav navbar-nav navbar-right">
+           <a onclick = "change_background(); return false;"  class="btn btn-default black_style9" tabindex = "-1" style = "font-size: 25; height: 50; width:65">☻   </a>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">					    
+ <div  class="row">
+  <div id = "window_pusto_left" class="col-lg-1 col-md-1 col-sm-1">
+  </div>  
+  <div id = "window_otvet_up" class="col-lg-10 col-md-10 col-sm-10"> 
+    <div id = "window_otvet" class="panel panel-primary white_style">
+         <div  class = "panel-body" >
+          <div id = "body_code_image" style = "background: url(/static/custom/css/1.png); background-position: center center; background-repeat:no-repeat; background-size:contain; height: 82%">
+          </div>
+      </div>
+    </div>    
+  </div>
+ </div> 
+</div>
+    
+
+<script>
+document.onkeyup = function (e) {
+    e = e || window.event;
+    if (e.keyCode === 13) {
+        start_2();
+    }
+    return false;
+
+}
+var image_schotchik = 1;
+function change_background(){
+  if (image_schotchik > 26) image_schotchik = 1;
+  else{
+    image_schotchik++;
+  } 
+  var image_fon = "fon_" + image_schotchik + ".jpg";
+  document.body.style.backgroundImage = 'url(/static/custom/css/'+image_fon +')';
+  image_schotchik = parseInt(image_schotchik);
+}
+var skorost = 1, body_code = 1;
+
+function skorost_plus(){
+  if (skorost < 6){
+    skorost++;
+    document.getElementById('skorost_tablo').innerHTML = skorost;
+  }
+}
+function skorost_minus(){
+  if (skorost > 1){
+    skorost--;
+    document.getElementById('skorost_tablo').innerHTML = skorost;
+  }
+}
+function body_code_plus(){
+  if (body_code < 6){
+    body_code++;
+    document.getElementById('body_code_tablo').innerHTML = body_code;
+    document.getElementById('body_code_image').style.backgroundImage = 'url(/static/custom/css/'+ body_code +'.png)';
+    body_code = parseInt(body_code);
+  }
+}
+function body_code_minus(){
+  if (body_code > 1){
+    body_code--;
+    document.getElementById('body_code_tablo').innerHTML = body_code;
+    document.getElementById('body_code_image').style.backgroundImage = 'url(/static/custom/css/'+ body_code +'.png)';
+    body_code = parseInt(body_code);
+  }
+}
+var mus_on = false;
+var audio = new Audio(); 
+
+function start_2() {
+  if (mus_on == true){
+    audio.pause();
+    audio.currentTime = 0.0;
+    mus_on = false;
+    document.getElementById('button_start').innerHTML = "►"; 
+
+  }
+  else{
+    document.getElementById('button_start').innerHTML = "◼";
+    setTimeout("document.getElementById('button_start').innerHTML = '►';", 20000);
+    switch (skorost){
+        case 1: 
+            audio.src = '/static/custom/audio/media1.mp3'; // Указываем путь к звуку "клика"
+            audio.autoplay = true;
+            mus_on = true;
+        break;
+        case 2: 
+            audio.src = '/static/custom/audio/media2.mp3'; // Указываем путь к звуку "клика"
+            audio.autoplay = true;
+            mus_on = true;
+        break;
+        case 3: 
+            audio.src = '/static/custom/audio/media3.mp3'; // Указываем путь к звуку "клика"
+            audio.autoplay = true;
+            mus_on = true;
+        break;
+        case 4: 
+            audio.src = '/static/custom/audio/media4.mp3'; // Указываем путь к звуку "клика"
+            audio.autoplay = true;
+            mus_on = true;
+        break;
+        case 5: 
+            audio.src = '/static/custom/audio/media5.mp3'; // Указываем путь к звуку "клика"
+            audio.autoplay = true;
+            mus_on = true;
+        break;
+        case 6: 
+            audio.src = '/static/custom/audio/media6.mp3'; // Указываем путь к звуку "клика"
+            audio.autoplay = true;
+            mus_on = true;
+        break;
+    }
+  }   
+}
+function no_active(n){
+var t = document.getElementsByClassName('btn-xs');
+    
+    for (var i = 0; i < t.length; i++){
+        t[i].style.backgroundColor = "#000000";
+        t[i].style.borderColor = "#000000";
+    }
+}
+</script>
+
+<script src="/static/js/jquery-1.10.2.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/custom.js"></script>
+	 
+</body>
+
+</html>
+{% endblock %}

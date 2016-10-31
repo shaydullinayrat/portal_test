@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function deletePlace(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_place") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#place' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+
+function more_place(id, title){
+    $('#modal_place_id').val(id);
+    $('#modal_place_title').val(title);
+    $('#place_modal').modal('show');
+}
+</script>
+<div class="row">
+    <h3>
+      <b>Аудитории</b>
+      <a class="btn btn-success" onclick="more_place('', '');"><b>+ ДОБАВИТЬ Аудиторию</b></a></h3>
+    <table class="table table-striped table-hover  panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">Центр</th>
+          <th class="col-lg-3">Аудитория</th>
+          <th class="col-lg-3">Занятий(в неделю)</th>
+          <th class="col-lg-3"></th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if places|length == 0%}
+            <tr><td colspan="3" align="center"><b>Не добавленa ни один аудитория!</b></td></tr>
+        {% endif %}
+        {% for place in places %}
+        <tr id="place{{ place.id }}">
+          <td>{{ place.center.title }}</td>
+          <td>{{ place.title }}</td>
+          <td>{{ place.times.all()|length }}</td>
+          <td class="btn-group btn-group-justified">
+            <a class="btn btn-default" onclick="more_place({{ place.id }},'{{ place.title }}')">Редактировать</a>
+            <a class="btn btn-danger" onclick="deletePlace({{ place.id }})">Удалить</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+<div class="modal" id="place_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Центр</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_place_id" name="modal_place_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Центр</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_place_title" name="modal_place_title" placeholder="Place" type="text">
+                      </div>
+                    </div>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

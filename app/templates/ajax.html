@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function sayHello(name) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('/sayhello', {
+        // params, that will be send as 'POST'
+        name: name
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        $('#answer').html(data.text)
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+</script>
+
+<div class="row">
+    <h1>Ajax</h1>
+    <div class="form-horizontal col-lg-6">
+      <fieldset>
+        <legend>Ajax example</legend>
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-2 control-label">Name</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="name"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-2 control-label">Answer</label>
+          <div class="col-lg-10">
+            <div id="answer" class="form-control" ></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+            <button class="btn btn-primary" onclick="sayHello($('#name').val());">Say Hello</button>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+</div>
+{% endblock %}

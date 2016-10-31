@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <h3 style = "text-align:center"><b>Игры Абакус</b></h3>
+   <div class = "col-lg-4">
+     
+      <div href="" onclick="window.location.href='/menar-flash-cw'"  style = "background: url(/static/custom/css/flashcart.png) ; background-position: center center; background-repeat: no-repeat ; background-size: contain; height:180px "></div>
+       <a href="/menar-flash-cw"><h4 style = "text-align:center; ">Флэш-карты </h4></a>
+    </div>
+    <div class = "col-lg-4">
+      
+      <div href="" onclick="window.location.href='/menar-abakus-cw'" style = "background: url(/static/custom/css/abakus.png) ; background-position: center center; background-repeat: no-repeat ; background-size: contain; height:180px "></div>
+      <a href="/menar-abakus-cw"><h4 style = "text-align:center; ">Счет на абакусе </h4></a>
+    </div>
+    <div class = "col-lg-4">
+      
+      <div href="" onclick="window.location.href='/menar-mental-cw'" style = "background: url(/static/custom/css/mental.png) ; background-position: center center; background-repeat: no-repeat ; background-size: contain; height:180px "></div>
+      <a href="/menar-mental-cw"><h4 style = "text-align:center; ">Счет на время</h4></a>
+    </div>
+    <div class = "col-lg-4">
+      
+      <div href="" onclick="window.location.href='/menar-dance'" style = "background: url(/static/custom/css/dance.png) ; background-position: center center; background-repeat: no-repeat ; background-size: contain; height:180px "></div>
+      <a href="/menar-dance"><h4 style = "text-align:center; ">Abacus-Dance </h4></a>
+    </div>
+</div>
+
+{% endblock %}

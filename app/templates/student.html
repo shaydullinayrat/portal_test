@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function deleteCourseStudent(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_student_course_cost") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+function deletePayment(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_payment") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#payment' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+function more(id, course_id, cost, comment){
+    $('#modal_id').val(id);
+    $('#modal_course_id').val(course_id);
+    if (course_id != ''){
+      $('#modal_course_id').attr("disabled", "")
+    }else{
+      $('#modal_course_id').removeAttr("disabled")
+    }
+    $('#modal_cost').val(cost);
+    $('#modal_cost_comment').val(comment);
+    $('#modal').modal('show');
+}
+function more_payment_modal(id, amount, amount_extra, comment_extra, course_id){
+  $('#payment_id').val(id);
+  $('#modal_payments_cost').val(amount);
+  $('#modal_payments_cost_extra').val(amount_extra);
+  $('#modal_payments_cost_extra_comment').val(comment_extra);
+  $('#modal_payments_course_id').val(course_id)
+  $('#payment_modal').modal('show');
+}
+</script>
+<div class="row">
+    <h3><b>Ученик:</b> {{ student.fio }}</h3>
+    <p><b>Родители: </b>{{ student.parent}}
+    <p><b>Телефон: </b>{{ student.phone }}
+    <p><b>Дата рождения: </b>{{ student.age.strftime('%d.%m.%Y') }}
+    <br><br>
+    <h4>
+      <b>Курсы</b>
+      <a class="btn btn-success" onclick="more('', '', '', '');"><b>+ ЗАПИСАТЬ НА КУРС</b></a>
+    </h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">Название</th>
+          <th class="col-lg-3">Преподаватель</th>
+          <th class="col-lg-1">Цена</th>
+          <th class="col-lg-2">Комментарий</th>
+          <th class="col-lg-3"></th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if courses|length == 0%}
+            <tr><td colspan="4" align="center"><b>Ученик не записан ни на один курс!</b></td></tr>
+        {% endif %}
+        {% for course in courses%}
+        <tr id="{{ course.id }}">
+          <td><a href="{{ url_for('show_course', course_id=course.course.id) }}">{{ course.course.title }}</a></td>
+          <td>{{ course.course.teacher.fio }}</td>
+          <td>{{ course.cost }} р.</td>
+          <td>{{ course.comment }}</td>
+          <td class="btn-group btn-group-justified">
+            <a class="btn btn-default" onclick="more('{{ course.id }}', '{{ course.course.id }}', '{{ course.cost }}', '{{ course.comment }}');">Редактировать</a>
+            <a class="btn btn-danger" onclick="deleteCourseStudent({{ course.id }});">Удалить</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br><br><br>
+    <h4><b>Классная работа</b></h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-4">Курс</th>
+          <th class="col-lg-4" colspan="2">Дата</th>
+          <th class="col-lg-4">Присутствие</th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        <form action="" method="POST">
+            <tr>
+              <td>
+                <select class="form-control" id="search_course_id" name="search_course_id">
+                  <option></option>
+                  {% for course in courses %}
+                    <option value="{{ course.course.id }}"
+                      {% if course.course.id|string == request.form.search_course_id|string %} selected="selected"{% endif %}>
+                      {{ course.course.title }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td>
+                <input class="form-control" id="modal_start_date" name="modal_start_date" placeholder="Start Date" type="text" value="{{ start_date.strftime('%d.%m.%Y') }}">
+              </td><td><input class="form-control" id="modal_end_date" name="modal_end_date" placeholder="End Date" type="text" value="{{ end_date.strftime('%d.%m.%Y') }}">
+              </td>
+              <td><button class="btn btn-primary btn-block" type="submit">Поиск</button></td>
+            </tr>
+            {% if lessons|length == 0%}
+              <tr><td colspan="4" align="center"><b>Не было занятий в данный период времени!</b></td></tr>
+            {% endif %}
+            {% for lesson in lessons %}
+              <tr {% if lesson.status == 1 %}
+                    class="success"
+                  {% elif lesson.status == 2 %}
+                    class="info"
+                  {% else %}
+                    class="warning"
+                  {% endif %}>
+                <td><a href="{{ url_for('show_course', course_id=lesson.lesson.course.id) }}">{{ lesson.lesson.course.title }}</td>
+                <td colspan="2">{{ lesson.lesson.date.strftime('%A (%d.%m) %H:%M') }}</td>
+                <td>
+                  {% if lesson.status == 1 %}
+                    Присутствовал
+                  {% elif lesson.status == 2 %}
+                    Отсутствовал по уважительной причине
+                  {% else %}
+                    Отсутствовал
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+        </form>
+      </tbody>
+    </table>
+    <br><br><br>
+    <h4><b>Оплата</4>
+      <a class="btn btn-success" onclick="more_payment_modal();"><b>+ ВНЕСТИ ОПЛАТУ</b></a></h2>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">Курс</th>
+          <th class="col-lg-2">Дата</th>
+          <th class="col-lg-1">Внесено</th>
+          <th class="col-lg-1">Доп оплата</th>
+          <th class="col-lg-3">Комментарий</th>
+          <th class="col-lg-2"></th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if student.payments.all()|length == 0%}
+            <tr><td colspan="3" align="center"><b>Оплата ни разу не производилась!</b></td></tr>
+        {% endif %}
+        {% for payment in student.payments.all() %}
+          <tr id="payment{{payment.id}}">
+            <td>{{ payment.course.title if payment.course else '<Данный курс удален из системы!>'}}</td>
+            <td>{{ payment.date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ payment.amount }} р.</td>
+            <td>{{ payment.amount_extra }} р.</td>
+            <td>{{ payment.comment_extra }}</td>
+            <td class="btn-group btn-group-justified">
+              <a class="btn btn-default" onclick="more_payment_modal({{ payment.id }}, '{{ payment.amount }}',  '{{ payment.amount_extra }}', '{{ payment.comment_extra }}' , {{ payment.course_id }});">Редактировать</a>
+              <a class="btn btn-danger" onclick="deletePayment({{ payment.id }});">Удалить</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<div class="modal" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Запись на курс</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_id" name="modal_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Курс</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_course_id" name="modal_course_id">
+                          {% for course in all_courses %}
+                          <option value="{{ course.id }}">{{ course.title }} - {{ course.student_cost }} р.</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Цена</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_cost" name="modal_cost" placeholder="Cost" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Комментарий</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_cost_comment" name="modal_cost_comment" placeholder="Комментарий" type="text">
+                      </div>
+                    </div>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal" id="payment_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Оплата</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+            <input type="hidden" name="payment_id" id="payment_id">
+            <fieldset>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Курс</label>
+                  <div class="col-lg-9">
+                    <select class="form-control" name="modal_payments_course_id" id="modal_payments_course_id">
+                      {% for course in courses %}
+                      <option value="{{ course.course.id }}">{{ course.course.title }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Сумма</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_payments_cost" name="modal_payments_cost" placeholder="Сумма" type="text">
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Доп оплата</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_payments_cost_extra" name="modal_payments_cost_extra" placeholder="Сумма" type="text">
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Комментарий</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_payments_cost_extra_comment" name="modal_payments_cost_extra_comment" placeholder="Комментарий" type="text">
+                  </div>
+                </div>
+
+            </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Оплатить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

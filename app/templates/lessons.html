@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function cancelLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('cancel_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).addClass('danger')
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+function deleteLesson(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('delete_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+function deleteTimesheet(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_timesheet") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#timesheet' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+function more(id, place, dow, hod, moh){
+    $('#modal_timesheet_id').val(id);
+    $('#modal_place').val(place);
+    $('#modal_dow').val(dow);
+    $('#modal_hod').val(hod);
+    $('#modal_moh').val(moh);
+    $('#modal').modal('show');
+}
+</script>
+<div class="row">
+    <h1><b>Курс: </b>{{ course.title}}</h1>
+    <h4><b>Место: </b>{{ course.place }}</h4>
+    <h4><b>Преподаватель: </b>{{ course.teacher.fio}}</h4>
+    <h4><b>Ученики: </b><a href="{{ url_for('show_course', course_id=course.id) }}">Подробнее</a></h4>
+    <br><br>
+    <h2><b>Распивание занятий</b>
+      <a class="btn btn-success" onclick="more('', '', '', '12', '00');"><b>+ ДОБАВИТЬ ЗАНЯТИЕ</b></a>
+    </h2>
+    <table class="table table-striped table-hover ">
+      <thead>
+        <tr>
+          <th class="col-lg-3">Место</th>
+          <th class="col-lg-3">День недели</th>
+          <th class="col-lg-3">Время</th>
+          <th class="col-lg-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if timesheets|length == 0%}
+            <tr><td colspan="3" align="center"><b>Не введено ни одно занятие!</b></td></tr>
+        {% endif %}
+        {% for timesheet in timesheets%}
+        <tr id="timesheet{{ timesheet.id }}">
+          <td>{{ timesheet.place }}</td>
+          <td>{% if timesheet.dow == 0 %}
+                Понедельник
+              {% elif timesheet.dow == 1 %}
+                Вторник
+              {% elif timesheet.dow == 2 %}
+                Среда
+              {% elif timesheet.dow == 3 %}
+                Четверг
+              {% elif timesheet.dow == 4 %}
+                Пятница
+              {% elif timesheet.dow == 5 %}
+                Суббота
+              {% elif timesheet.dow == 6 %}
+                Воскресенье
+              {% endif%}
+          </td>
+          <td>{{ timesheet.hod }}:{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}</td>
+          <td class="btn-group btn-group-justified">
+            <a class="btn btn-default" onclick="more('{{ timesheet.id }}', '{{ timesheet.place }}', '{{ timesheet.dow }}', '{{ timesheet.hod }}', '{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}');">Изменить</a>
+            <a class="btn btn-danger" onclick="deleteTimesheet({{ timesheet.id }});">Удалить</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br><br><br>
+    <h2><b>Занятия</b></h2>
+    <table class="table table-striped table-hover ">
+      <thead>
+        <tr>
+          <th class="col-lg-4">Дата</th>
+          <th class="col-lg-4">Статус</th>
+          <th class="col-lg-4"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if lessons|length == 0%}
+            <tr><td colspan="3" align="center"><b>Нет ни одного занятия!</b></td></tr>
+        {% endif %}
+        {% for lesson in lessons%}
+        <tr id="{{ lesson.id }}"
+              {% if lesson.status == 1 %} class="success"
+              {% elif lesson.status == -1 %} class="danger"
+              {% endif%}>
+          <td>{{ lesson.date.strftime('%A (%d.%m) %H:%M') }}</td>
+          <td>{% if lesson.status == 0 %}
+                Еще не проведен
+              {% elif lesson.status == 1 %}
+                Проведен
+              {% elif lesson.status == -1 %}
+                Отменен
+              {% endif %}
+          </td>
+          <td class="btn-group btn-group-justified">
+            <a class="btn btn-primary" href="{{ url_for('show_lesson', lesson_id=lesson.id) }}">{% if lesson.status != 1 %}Начать{% else %}Подробнее{% endif %}</a>
+            {% if lesson.status != -1 %}<a class="btn btn-warning" onclick="cancelLesson({{ lesson.id }});">Отменить</a>{% endif %}
+            <a class="btn btn-danger" onclick="deleteLesson({{ lesson.id }});">Удалить</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<div class="modal" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Новое занятие</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_timesheet_id" name="modal_timesheet_id" value=""/>
+
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Место</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_place" name="modal_place" placeholder="Place" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">День недели</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_dow" name="modal_dow">
+                          <option value="0">Понедельник</option>
+                          <option value="1">Вторник</option>
+                          <option value="2">Среда</option>
+                          <option value="3">Четверг</option>
+                          <option value="4">Пятница</option>
+                          <option value="5">Суббота</option>
+                          <option value="6">Воскресенье</option>
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Часы</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_hod" name="modal_hod" placeholder="Hour" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Минуты</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_moh" name="modal_moh" placeholder="Minutes" type="text">
+                      </div>
+                    </div>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

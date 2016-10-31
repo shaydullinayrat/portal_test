@@ -1,0 +1,1095 @@
+app.route('/lessonsheet2/<course_id>', methods=['GET', 'POST'])
+def lessonsheet2(course_id):
+    if not g.user.is_admin and not g.user.teacher:
+        abort(404)
+    course = Course.query.get(course_id)
+    if not course:
+        abort(404)
+    elif g.user.teacher and g.user.teacher.id != course.teacher_id:
+        abort(403)
+
+    today = datetime.now()
+    month_start = today.replace(day=1)
+    month_end = month_start.replace(month=month_start.month+1)
+    lessons = Lesson.query.filter(Lesson.course_id == course_id)\
+                          .filter(Lesson.date.between(month_start.strftime('%d-%m-%Y'), month_end.strftime('%d-%m-%Y')))\
+                          .order_by(Lesson.date)
+    students = Student_course_cost.query.filter(Student_course_cost.course_id == course_id).all()
+    all_students = Student.query.filter(Student.id.notin_([row.student_id for row in students])).all()                    
+    lespresences = Presence.query.join(Lesson, Presence.lesson_id == Lesson.id )\
+                                      .filter(Lesson.course_id == course_id)\
+                                      .filter(Lesson.date.between(month_start.strftime('%d-%m-%Y'), month_end.strftime('%d-%m-%Y')))\
+                                      .order_by(Lesson.date)
+    summ_all = 0
+    summ_done = 0 
+    result = []
+    try:  
+    
+                for student in students:
+                    student_in_course = Student_course_cost.query.filter(Student_course_cost.student_id == student.student.id)\
+                                                        .filter(Student_course_cost.course_id == course_id).first()
+                    if student_in_course:
+                        cost = student_in_course.cost
+                    alll = Lesson.query.filter(Lesson.course_id == course_id)\
+                                           .filter(Lesson.date.between(month_start.strftime('%d-%m-%Y'), month_end.strftime('%d-%m-%Y')))\
+                                           .filter(Lesson.status != 2).all()
+                    pres = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                                              .filter(Lesson.course_id == course_id)\
+                                              .filter(Presence.student_id == student.student.id)\
+                                              .filter(Lesson.date.between(month_start.strftime('%d-%m-%Y'), month_end.strftime('%d-%m-%Y')))\
+                                              .filter(Presence.status == 1).all()  
+                    not_pres = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                                              .filter(Lesson.course_id == course_id)\
+                                              .filter(Presence.student_id == student.student.id)\
+                                              .filter(Lesson.date.between(month_start.strftime('%d-%m-%Y'), month_end.strftime('%d-%m-%Y')))\
+                                              .filter(Presence.status == -1).all()   
+                    not_pres_2 = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                                              .filter(Lesson.course_id == course_id)\
+                                              .filter(Presence.student_id == student.student.id)\
+                                              .filter(Lesson.date.between(month_start.strftime('%d-%m-%Y'), month_end.strftime('%d-%m-%Y')))\
+                                              .filter(Presence.status == 2).all()  
+                    payments = Payment.query.filter(Payment.student_id == student.student.id)\
+                                                .filter(Payment.course_id == course_id)\
+                                                .filter(Payment.date.between(month_start.strftime('%d-%m-%Y'), month_end.strftime('%d-%m-%Y'))).all()   
+                    this_month_payments = 0
+                    for payment in payments:
+                        this_month_payments += payment.amount
+                    all_payments = 0                                                                                                                       
+                    payments = Payment.query.filter(Payment.student_id == student.student.id)\
+                                                .filter(Payment.course_id == course_id).all()
+                    for payment in payments:
+                            all_payments += payment.amount                                
+                    prev_all_presence = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                                                        .filter(Lesson.course_id == course_id)\
+                                                        .filter(Presence.student_id == student.student.id)\
+                                                        .filter(Lesson.date < month_start.strftime('%d-%m-%Y'))\
+                                                        .filter(Presence.status != 2).all()
+                    prev_month_debt = len(prev_all_presence) * cost
+                    prev_month_payments = all_payments - this_month_payments - prev_month_debt
+                    all_presence = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                                                   .filter(Lesson.course_id == course_id)\
+                                                   .filter(Presence.student_id == student.student.id)\
+                                                   .filter(Lesson.date < month_end.strftime('%d-%m-%Y'))\
+                                                   .filter(Presence.status != 2).all()
+                    all_debt = len(all_presence) * cost
+                    debt = all_payments - all_debt
+                    result.append({    'student_id': student.id,
+                                       'alll': len(alll),
+                                       'pres': len(pres),
+                                       'uv': len(not_pres_2),
+                                       'not_pres': len(not_pres),
+                                       'student': student,
+                                       'cost': cost,
+                                       'this_month_payments': this_month_payments,
+                                       'prev_month_payments': prev_month_payments,
+                                       'debt': debt})
+                    summ_all += cost * len(alll)
+                    summ_done += cost * (len(pres) + len(not_pres))
+    except:
+            flash("Ошибка!", 'error')
+            result = None
+
+    if request.method == "POST":
+        if 'modal_pay' in request.form:
+            student_id = request.form['student_id']
+            if request.form['modal_pay'] != '':
+                pay = int(request.form['modal_pay'])
+            else: 
+                pay = 0
+            if request.form['modal_cost_extra'] != '':
+                pay_extra = int(request.form['modal_cost_extra'])
+            else: 
+                pay_extra = 0        
+            pay_extra_comment = request.form['modal_cost_extra_comment']
+            lesson_id = request.form['lesson_id']
+            lesson = Lesson.query.get(lesson_id) 
+            now_date = lesson.date.strftime('%d.%m.%y')
+            # now_date = datetime.strptime(request.form['lesson_id'], '%d.%m.%Y')
+            payment = Payment(student_id, course_id, pay, pay_extra, pay_extra_comment, now_date)
+            db.session.add(payment)
+            db.session.commit()
+            flash("Оплата занесена в систему!")  
+        elif 'modal_timesheet_id' in request.form:
+                dow = int(request.form['modal_dow'])
+                hod = int(request.form['modal_hod']) % 24
+                moh = int(request.form['modal_moh']) % 60
+                hoe = int(request.form['modal_hoe']) % 24
+                moe = int(request.form['modal_moe']) % 60
+                if request.form['modal_timesheet_id'] == '':
+                    course = Course.query.get(course_id)
+                    timesheet = Timesheet.query.join(Course, Timesheet.course_id == Course.id)\
+                                                .filter(Course.teacher_id == course.teacher_id)\
+                                                .filter(Timesheet.dow == dow)\
+                                                .filter(Timesheet.hod == hod).first()
+                    if timesheet:
+                        flash("В это время у преподавателя уже стоит занятие!")
+                    else:
+                        timesheet = Timesheet.query.filter(Timesheet.place_id == request.form['modal_place'])\
+                                                    .filter(Timesheet.dow == dow)\
+                                                    .filter(Timesheet.hod == hod).first()
+                        if timesheet:
+                            flash("В это время в этой аудитории уже стоит занятие!")
+                        else:
+                            timesheet = Timesheet(course_id,
+                                                  request.form['modal_place'],
+                                                  dow,
+                                                  hod,
+                                                  moh,
+                                                  hoe,
+                                                  moe)
+                            db.session.add(timesheet)
+                            db.session.commit()
+                            reform_lessons(course_id)
+                            flash("Успешно добавлен!")
+                else:
+                    course = Course.query.get(course_id)
+                    timesheet = Timesheet.query.join(Course, Timesheet.course_id == Course.id)\
+                                                .filter(Timesheet.id != request.form['modal_timesheet_id'])\
+                                                .filter(Course.teacher_id == course.teacher_id)\
+                                                .filter(Timesheet.dow == dow)\
+                                                .filter(Timesheet.hod == hod).first()
+                    if timesheet:
+                        flash("В это время у преподавателя уже стоит занятие!")
+                    else:
+                        timesheet = Timesheet.query.filter(Timesheet.place_id == request.form['modal_place'])\
+                                                   .filter(Timesheet.id != request.form['modal_timesheet_id'])\
+                                                   .filter(Timesheet.dow == dow)\
+                                                   .filter(Timesheet.hod == hod).first()
+                        if timesheet:
+                            flash("В это время в этой аудитории уже стоит занятие!")
+                        else:
+                            timesheet = Timesheet.query.get(request.form['modal_timesheet_id'])
+                            timesheet.place_id = request.form['modal_place']
+                            timesheet.dow = dow
+                            timesheet.hod = hod
+                            timesheet.moh = moh
+                            timesheet.hoe = hoe
+                            timesheet.moe = moe
+                            db.session.commit()
+                            flash("Расписание успешно изменено")
+        elif 'modal_id' in request.form:
+                if request.form['modal_id'] == '':
+                    course = Student_course_cost.query.filter(Student_course_cost.student_id == request.form['modal_student_id'])\
+                                .filter(Student_course_cost.course_id == course_id).first()
+                    if course:
+                        flash("Такой ученик уже есть в системе!")
+                    else:
+                        try:
+                            cost = int(request.form['modal_cost'])
+                            comment = request.form['modal_cost_comment']
+                        except:
+                            cost = 0
+                            flash("Ошибка: Поле стоимости содержит неправильное значение!", 'error')
+                        course = Student_course_cost(course_id,
+                                                     request.form['modal_student_id'],
+                                                     cost,
+                                                     comment)
+                        db.session.add(course)
+                        db.session.commit()
+                        flash("Успешно добавлен!")
+                else:
+                    course = Student_course_cost.query.get(request.form['modal_id'])
+                    try:
+                        course.comment = request.form['modal_cost_comment']
+                        course.cost = int(request.form['modal_cost'])
+                        db.session.commit()
+                        flash("Успешно изменен!")
+                    except:
+                        flash("Ошибка: Поле стоимости содержит неправильное значение!", 'error')                    
+        elif 'modal_id_info' in request.form:
+                if request.form['modal_id_info'] == '':
+                    if request.form['modal_fio'] != '':
+                        user = User(request.form['modal_username'], request.form['modal_password'], request.form['modal_email'])
+                        if request.form['modal_age'] == '':
+                            user.student = Student(request.form['modal_fio'],
+                                               request.form['modal_parent'],
+                                               request.form['modal_phone'],
+                                               datetime.strptime('01.01.1900', '%d.%m.%Y'))
+                        else:
+                            user.student = Student(request.form['modal_fio'],
+                                               request.form['modal_parent'],
+                                               request.form['modal_phone'],
+                                               datetime.strptime(request.form['modal_age'], '%d.%m.%Y'))
+                        db.session.add(user)
+                        db.session.commit()
+                        flash("Успешно добавлено!")
+                        return redirect(url_for('show_student', student_id=user.student.id))
+                    else:
+                        flash("Ошибка: Поле ФИО пустое!", 'error')
+                else:
+                    if request.form['modal_fio'] != '':
+                        student = Student.query.get(request.form['modal_id_info'])
+                        if student:
+                            student.user.username = request.form['modal_username']
+                            student.user.password = request.form['modal_password']
+                            student.user.email = request.form['modal_email']
+                            student.fio = request.form['modal_fio']
+                            student.parent = request.form['modal_parent']
+                            student.phone = request.form['modal_phone']
+                            student.age = datetime.strptime(request.form['modal_age'], '%d.%m.%Y')
+                            db.session.commit()
+                            flash("Успешно изменено!")
+                        else:
+                            flash("Ошибка: такой студент не найден!", 'error')
+                    else:
+                        flash("Ошибка: Поле ФИО пустое!", 'error')
+                                           
+        try:                   
+            if 'month' in request.form and request.form['month']:
+                selected_month = int(request.form['month'])
+                if (selected_month <= 11) and (selected_month >= 9):
+                    month_start2 = month_start.replace(month=selected_month)
+                    month_end2 = month_start2.replace(month=month_start2.month+1)
+                elif (selected_month == 12): 
+                    month_start2 = month_start.replace(month=selected_month)
+                    month_end2 = month_start2.replace(month=1) 
+                    month_end2 = month_end2.replace(year=month_end2.year+1)
+                elif (selected_month >= 1) and (selected_month <= 8):
+                    month_start2 = month_start.replace(month=selected_month)
+                    month_start2 = month_start2.replace(year=month_start2.year+1)
+                    month_end2 = month_start2.replace(month=month_start2.month+1)     
+                lessons = Lesson.query.filter(Lesson.course_id == course_id)\
+                          .filter(Lesson.date.between(month_start2.strftime('%d-%m-%Y'), month_end2.strftime('%d-%m-%Y')))\
+                          .order_by(Lesson.date)
+                lespresences = Presence.query.join(Lesson, Presence.lesson_id == Lesson.id )\
+                                          .filter(Lesson.course_id == course_id)\
+                                          .filter(Lesson.date.between(month_start2.strftime('%d-%m-%Y'), month_end2.strftime('%d-%m-%Y')))\
+                                          .order_by(Lesson.date).all()              
+            
+
+                # students = Student.query.filter(Student.course_id == course_id).all()
+                # for student in students:
+                #     student_in_course = Student_course_cost.query.filter(Student_course_cost.student_id == student.id)\
+                #                                         .filter(Student_course_cost.course_id == course_id).first()
+                #     if student_in_course:
+                #         cost = student_in_course.cost
+                #     alll = Lesson.query.filter(Lesson.course_id == course_id)\
+                #                            .filter(Lesson.date.between(month_start2.strftime('%d-%m-%Y'), month_end2.strftime('%d-%m-%Y')))\
+                #                            .filter(Lesson.status != 2).all()
+                #     pres = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                #                               .filter(Lesson.course_id == course_id)\
+                #                               .filter(Presence.student_id == student.id)\
+                #                               .filter(Lesson.date.between(month_start2.strftime('%d-%m-%Y'), month_end2.strftime('%d-%m-%Y')))\
+                #                               .filter(Presence.status == 1).all()  
+                #     not_pres = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                #                               .filter(Lesson.course_id == course_id)\
+                #                               .filter(Presence.student_id == student.id)\
+                #                               .filter(Lesson.date.between(month_start2.strftime('%d-%m-%Y'), month_end2.strftime('%d-%m-%Y')))\
+                #                               .filter(Presence.status == -1).all()   
+                #     not_pres_2 = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                #                               .filter(Lesson.course_id == course_id)\
+                #                               .filter(Presence.student_id == student.id)\
+                #                               .filter(Lesson.date.between(month_start2.strftime('%d-%m-%Y'), month_end2.strftime('%d-%m-%Y')))\
+                #                               .filter(Presence.status == 2).all()  
+                #     payments = Payment.query.filter(Payment.student_id == student.id)\
+                #                                 .filter(Payment.course_id == course_id)\
+                #                                 .filter(Payment.date.between(month_start2.strftime('%d-%m-%Y'), month_end2.strftime('%d-%m-%Y'))).all()   
+                #     this_month_payments = 0
+                #     for payment in payments:
+                #         this_month_payments += payment.amount
+                #     all_payments = 0                                                                                                                       
+                #     payments = Payment.query.filter(Payment.student_id == student.id)\
+                #                                 .filter(Payment.course_id == course_id).all()
+                #     for payment in payments:
+                #             all_payments += payment.amount                                
+                #     prev_all_presence = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                #                                         .filter(Lesson.course_id == course_id)\
+                #                                         .filter(Presence.student_id == student.id)\
+                #                                         .filter(Lesson.date < month_start2.strftime('%d-%m-%Y'))\
+                #                                         .filter(Presence.status != 2).all()
+                #     prev_month_debt = len(prev_all_presence) * cost
+                #     prev_month_payments = all_payments - this_month_payments - prev_month_debt
+                #     all_presence = Lesson.query.join(Presence, Presence.lesson_id == Lesson.id)\
+                #                                    .filter(Lesson.course_id == course_id)\
+                #                                    .filter(Presence.student_id == student.id)\
+                #                                    .filter(Lesson.date < month_end2.strftime('%d-%m-%Y'))\
+                #                                    .filter(Presence.status != 2).all()
+                #     all_debt = len(all_presence) * cost
+                #     debt = all_payments - all_debt
+                #     result.append({    'alll': len(alll),
+                #                        'pres': len(pres),
+                #                        'uv': len(not_pres_2),
+                #                        'not_pres': len(not_pres),
+                #                        'student': student,
+                #                        'cost': cost,
+                #                        'this_month_payments': this_month_payments,
+                #                        'prev_month_payments': prev_month_payments,
+                #                        'debt': debt})
+                #     summ_all += cost * len(alll)
+                #     summ_done += cost * (len(pres) + len(not_pres))
+        except:
+            flash("Ошибка!", 'error')
+        finally:
+            lessons = lessons.all()
+
+    timesheets = Timesheet.query.filter(Timesheet.course_id == course_id).order_by(Timesheet.dow, Timesheet.hod).all()
+    course = Course.query.get(course_id)
+    if not course:
+        abort(404)        
+    teachers = Teacher.query.all()
+    places = Place.query.all()
+    return render_template("lessonsheet2.html",
+                               title="Расписание занятий",
+                               lessons=lessons,
+                               result=result,
+                               today = today,
+                               all_students=all_students,
+                               course = course,
+                               timesheets = timesheets,
+                               lespresences=lespresences,
+                               students=students,
+                               teachers=teachers,
+                               places=places,
+                               user=g.user)
+
+
+
+
+
+
+
+
+
+    {% extends "base.html" %}
+{% block content %}
+<script>
+function more_payment_modal(student_id, lesson_id ){
+  $('#student_id').val(student_id)
+  $('#lesson_id').val(lesson_id)
+  $('#payment_modal').modal('show');
+}
+function startLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('start_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).removeClass('warning')
+            $(com).addClass('success')
+
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}    
+function cancelLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('cancel_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).addClass('warning')
+
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+function check_presence(student_id, lesson_id, status) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("check_presence") }}', {
+        // params, that will be send as 'POST'
+        student_id: student_id,
+        lesson_id: lesson_id,
+        status: status
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + student_id + lesson_id
+            reason_com = '#reason_' + student_id + lesson_id
+            if (status == 1){
+              $(com).removeClass('danger')
+              $(com).removeClass('info')
+              $(com).addClass('success')
+              $(reason_com).html('П')
+            }else if (status == 2){
+              $(com).removeClass('success')
+              $(com).removeClass('danger')
+              $(com).addClass('info')
+              $(reason_com).html('У')
+            }else{
+              $(com).removeClass('success')
+              $(com).removeClass('info')
+              $(com).addClass('danger')
+              $(reason_com).html('Н')
+            }
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+function cancelLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for('cancel_lesson') }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).addClass('danger')
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+}
+function deleteLesson(id) {
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    if (confirm('Вы уверены?')){
+      $.post('{{ url_for('delete_lesson') }}', {
+          // params, that will be send as 'POST'
+          id: id
+      }).done(function(data) {
+          // actions, that will be done after successfull response
+          if (data.res == 1){
+              com = '#' + id
+              $(com).hide()
+          }
+      }).fail(function() {
+          // actions, that will be done after UNsuccessfull response
+          alert('error')
+      });
+    }
+}
+
+function more(id, place, dow, hod, moh, hoe, moe){
+    $('#modal_timesheet_id').val(id);
+    $('#modal_place').val(place);
+    $('#modal_dow').val(dow);
+    $('#modal_hod').val(hod);
+    $('#modal_moh').val(moh);
+    $('#modal_hoe').val(hoe);
+    $('#modal_moe').val(moe);
+    $('#time_modal').modal('show');
+}
+
+function deleteTimesheet(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_timesheet") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#timesheet' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+
+function more_course(id, student_id, cost, comment){
+    $('#modal_id').val(id);
+    $('#modal_student_id').val(student_id);
+    if (student_id != ''){
+      $('#modal_student_id_field').hide()
+    }else{
+      $('#modal_student_id_field').show()
+    }
+    $('#modal_cost').val(cost);
+    $('#modal_cost_comment').val(comment);
+    $('#modal').modal('show');
+}
+
+function more_student(id, username, password, email, fio, parent, phone, age){
+    $('#modal_id_info').val(id);
+    $('#modal_username').val(username);
+    $('#modal_password').val(password);
+    $('#modal_email').val(email);
+    $('#modal_fio').val(fio);
+    $('#modal_parent').val(parent);
+    $('#modal_phone').val(phone);
+    $('#modal_age').val(age);
+    $('#modal_info').modal('show');
+}
+
+function deleteCourseStudent(id) {
+  if (confirm('Вы уверены?')){
+    // Example of client side AJAX
+    // function uses jQuery to send async request to server (into '/sayhello' address)
+    $.post('{{ url_for("delete_student_course_cost") }}', {
+        // params, that will be send as 'POST'
+        id: id
+    }).done(function(data) {
+        // actions, that will be done after successfull response
+        if (data.res == 1){
+            com = '#' + id
+            $(com).hide()
+        }
+    }).fail(function() {
+        // actions, that will be done after UNsuccessfull response
+        alert('error')
+    });
+  }
+}
+</script>
+
+<div class="row" >
+
+  <div class="col-lg-6">
+    <h4><b>Сведения</b></h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3"><b>Курс: </b></th>
+          <th class="col-lg-3">{{ course.title }}</th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        <tr>
+          <td><b>Предмет: </b></td>
+          <td >{{ course.discipline.title }}</td>
+        </tr>
+         <tr>
+          <td><b>Преподаватель: </b></td>
+          <td >{{ course.teacher.fio }}</td>
+        </tr>
+        <tr>
+          <td><b>Продолжительность: </b></td>
+          <td >с {{ course.start_date.strftime('%d.%m.%Y') }} по {{ course.end_date.strftime('%d.%m.%Y') }}</td>
+        </tr>
+        <tr>
+          <td><b>Стоимость занятия: </b></td>
+          <td > {{course.cost}} р.</td>
+        </tr>
+      </tbody>
+    </table>
+     <h4><b>Табель посещаемости</b> <a class="btn btn-success" onclick="more_student('', '', '1234', '', '');"><b> + Создать ученика</b></a></h4> 
+  </div>
+  <div class="col-lg-6">
+  <h4><b>Расписание занятий</b> 
+          
+    </h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">Место</th>
+          <th class="col-lg-3">День недели</th>
+          <th class="col-lg-3">Время</th>
+          <th class="col-lg-3" > <a class="btn btn-success" onclick="more('', '', '', '12', '00', '1', '00');"><b>+ ДОБАВИТЬ ЗАНЯТИЕ</b></a> </th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if timesheets|length == 0%}
+            <tr><td colspan="3" align="center"><b>Не введено ни одно занятие!</b></td></tr>
+        {% endif %}
+        {% for timesheet in timesheets %}
+        <tr id="timesheet{{ timesheet.id }}">
+          <td>{{ timesheet.place.title }}</td>
+          <td>{% if timesheet.dow == 0 %}
+                Понедельник
+              {% elif timesheet.dow == 1 %}
+                Вторник
+              {% elif timesheet.dow == 2 %}
+                Среда
+              {% elif timesheet.dow == 3 %}
+                Четверг
+              {% elif timesheet.dow == 4 %}
+                Пятница
+              {% elif timesheet.dow == 5 %}
+                Суббота
+              {% elif timesheet.dow == 6 %}
+                Воскресенье
+              {% endif%}
+          </td>
+          <td>{{ timesheet.hod }}:{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }} - {{ timesheet.hod + timesheet.hoe}}:{% if (timesheet.moh + timesheet.moe)|string|length != 2 %}0{% endif %}{{ timesheet.moh + timesheet.moe }}</td>
+          <td class="btn-group btn-group-justified" >
+                  <a  class="btn btn-success" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Действие</a>
+                  <ul class="dropdown-menu">
+                     <li><a  href="#" onclick="more('{{ timesheet.id }}', '{{ timesheet.place.id }}', '{{ timesheet.dow }}', '{{ timesheet.hod }}', '{% if timesheet.moh|string|length != 2 %}0{% endif %}{{ timesheet.moh }}', '{{ timesheet.hoe }}', '{% if timesheet.moe|string|length != 2 %}0{% endif %}{{ timesheet.moe }}');">Редактировать</a></li>
+                    <li><a  href="#" onclick="deleteTimesheet({{ timesheet.id }});">Удалить</a></li>
+                  </ul>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+
+
+   {% if user and user.is_admin or user.teacher%}
+    
+    <table class="table table-striped table-bordered table-hover panel panel-primary">
+      <thead class="panel-heading">
+        {% if user and user.is_admin%}
+        <tr>
+        <th>
+          <form action="" method="POST">
+            <select style = "color:white" class="form-control" id="month" name="month" onchange='this.form.submit()'>
+                  <option value=""></option>
+                  <option style = "color:grey" value="9" {% if (request.form.month == '9') or (today.month == 9) %} selected="selected"{% endif %}>
+                  Сентябрь</option>
+                  <option style = "color:grey" value="10" {% if (request.form.month == '10') or (today.month == 10) %} selected="selected"{% endif %}>
+                  Октябрь</option>
+                  <option style = "color:grey" value="11" {% if (request.form.month == '11') or (today.month == 11) %} selected="selected"{% endif %}>
+                  Ноябрь</option>
+                  <option style = "color:grey" value="12" {% if (request.form.month == '12') or (today.month == 12) %} selected="selected"{% endif %}>  
+                  Декабрь</option>
+                  <option style = "color:grey" value="1" {% if (request.form.month == '1') or (today.month == 1) %} selected="selected"{% endif %}>
+                  Январь</option>
+                  <option style = "color:grey" value="2" {% if (request.form.month == '2') or (today.month == 2) %} selected="selected"{% endif %}>
+                  Февраль</option>
+                  <option style = "color:grey" value="3" {% if (request.form.month == '3') or (today.month == 3) %} selected="selected"{% endif %}>
+                  Март</option>
+                  <option style = "color:grey" value="4" {% if (request.form.month == '4') or (today.month == 4) %} selected="selected"{% endif %}>
+                  Апрель</option>
+                  <option style = "color:grey" value="5" {% if (request.form.month == '5') or (today.month == 5) %} selected="selected"{% endif %}>
+                  Май</option>
+                  <option style = "color:grey" value="6" {% if (request.form.month == '6') or (today.month == 6) %} selected="selected"{% endif %}>
+                  Июнь</option>
+                  <option style = "color:grey" value="7" {% if (request.form.month == '7') or (today.month == 7) %} selected="selected"{% endif %}>
+                  Июль</option>
+                  <option style = "color:grey" value="8" {% if (request.form.month == '8') or (today.month == 8) %} selected="selected"{% endif %}>
+                  Август</option>
+            </select>
+          </form> 
+        </th>
+<!-- 
+        <th >Телефон</th>
+        <th >Стоимость занятия</th>
+        <th >Комментарий</th> -->
+
+
+          {% for lesson in lessons %}  
+             <th  style = "text-align:center">
+              
+                    {% if lesson.timesheet.dow == 0 %}
+                      Пн
+                    {% elif lesson.timesheet.dow == 1 %}
+                      Вт
+                    {% elif lesson.timesheet.dow == 2 %}
+                      Ср
+                    {% elif lesson.timesheet.dow == 3 %}
+                      Чт
+                    {% elif lesson.timesheet.dow == 4 %}
+                      Пт
+                    {% elif lesson.timesheet.dow == 5 %}
+                      Сб
+                    {% elif lesson.timesheet.dow == 6 %}
+                      Вс
+                    {% endif%}
+              </th>
+          {% endfor %}
+        </tr>  
+      </thead>
+      <tbody class="panel-body">
+        <tr>
+          <td>
+            
+            <div class="col-lg-3 ">
+              Телефон
+            </div> 
+            <div class="col-lg-1 ">
+              Стоим
+            </div> 
+            <div class="col-lg-2 ">
+             Оплата
+            </div> 
+            <div class="col-lg-2 ">
+              Долг
+            </div> 
+             <div class="col-lg-4 ">
+              <a class="btn btn-success" onclick="more_course('', '', {{ course.student_cost }}, '');"><b> + ДОБАВИТЬ УЧЕНИКА</b></a>
+            </div>
+          </td>
+          <!-- <td></td>  <td></td>  <td></td> -->
+          {% for lesson in lessons %}  
+             <td id="{{ lesson.id }}" style = "text-align:center" {% if lesson.status == 1 %} class = "success" {% elif lesson.status == -1 %}  class = "danger" {% endif %}>
+                <div class="btn-group ">
+                  <a style = " display:'inline-block'; padding:15px; color:grey" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><b>{{lesson.date.strftime('%d')}}</b></a>
+                  <ul class="dropdown-menu">
+                     <li><a onclick="startLesson({{ lesson.id }});" href="#">Начать</a></li>
+                    <li><a onclick="cancelLesson({{ lesson.id }});" href="#">Отменить</a></li>
+                    <li><a href="#">Подробнее</a></li>
+                  </ul>
+                </div>
+              </td>
+          {% endfor %}
+        </tr>
+        {% for student in students%}
+        <tr>
+          <td>
+           
+            <div class="col-lg-3 ">
+              {{ student.student.phone }}
+            </div> 
+            <div class="col-lg-1 ">
+              {{ student.cost }}
+            </div> 
+            <div class="col-lg-2 ">
+               {% for res in result %}
+             {% if res.student_id == student.id %}
+             {{ res.this_month_payments }} р.
+            {% endif %} 
+             {% endfor %}
+            </div> 
+            <div class="col-lg-2 ">
+              {% for res in result %}
+             {% if res.student_id == student.id %}
+              {{ res.debt }} р.
+              {% endif %} 
+             {% endfor %}
+            </div> 
+             <div class="col-lg-4 ">
+              <div class="btn-group ">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><b>{{student.student.fio}} </b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('show_student', student_id=student.student.id) }}">Подробнее</a></li>
+                    <li><a href="#" onclick="more_student('{{ student.student.id }}', '{{ student.student.user.username }}', '{{ student.student.user.password }}', '{{ student.student.user.email }}', '{{ student.student.fio }}', '{{ student.student.parent }}', '{{ student.student.phone }}', {% if student.student.age.strftime('%d.%m.%Y') != '01.01.1900' %} '{{ student.student.age.strftime('%d.%m.%Y') }}' {% else%} '' {% endif%} );">Профиль</a></li>
+                    <li><a href="#" onclick="more_course({{ student.id }}, {{ student.student.id }}, '{{ student.cost }}', '{{ student.comment }}');">Стоимость занятия</a></li>
+                    <li><a href="#"  onclick="deleteCourseStudent({{ student.id }});">Удалить</a> </li>         
+                  </ul>
+              </div>
+            </div>
+           {%  for lesson in lessons  %}
+              <td  id='{{ student.student.id  }}{{ lesson.id  }}' style = "text-align:center" 
+                {% for presence in lespresences %}
+                  {% if (presence.student_id == student.student.id) and (presence.lesson.date == lesson.date) %}
+                    {% if presence.status == 1 %} 
+                      class ="success" 
+                    {% elif presence.status == 2 %} 
+                      class ="info" 
+                    {% elif presence.status == -1 %} 
+                      class ="danger"  
+                    {% else %} 
+                      class ="danger" 
+                    {% endif %}
+                  {% endif %}   
+               {% endfor%}>
+                  <div class="btn-group">
+                    <a  id="reason_{{ student.student.id }}{{ lesson.id  }}" style = "display:'inline-block'; padding:15px; color:grey"  href="" class="dropdown-toggle " data-toggle="dropdown" aria-expanded="false">
+                    {% for presence in lespresences %}
+                        {% if (presence.student_id == student.student.id) and (presence.lesson.date == lesson.date) %}
+                          {% if presence.status == 1 %} 
+                            П
+                          {% elif presence.status == 2 %} 
+                            У 
+                          {% elif presence.status == -1 %} 
+                            Н  
+                          {% else %} 
+                            ? 
+                          {% endif %}
+                        {% endif %}   
+                     {% endfor%}
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a onclick="check_presence('{{ student.student.id }}', '{{ lesson.id }}', 1);" href="#">Присутствовал</a></li>
+                      <li><a onclick="check_presence('{{ student.student.id }}', '{{ lesson.id }}', -1);" href="#">Отсутствовал</a></li>
+                      <li><a onclick="check_presence('{{ student.student.id }}', '{{ lesson.id }}', 2);" href="#">Отсутствовал по уважительной причине</a></li>
+                      <li><a onclick="more_payment_modal({{ student.student.id }}, '{{ lesson.id }}' );" href="#">Оплата</a></li>
+                    </ul>
+                  </div>
+                </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+     </tbody>
+     {% endif%}
+    </table>
+    {% endif%} 
+</div>
+
+{% if user and user.is_admin%}
+
+
+
+
+<div class="modal" id="payment_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Оплата</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+            <fieldset>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Дата занятия</label>
+                  <div class="col-lg-9">
+                    <select disabled class="form-control" id="lesson_id" name="lesson_id" >
+                      {% for lesson in lessons %}
+                      <option value="{{ lesson.id }}">
+                        {{ lesson.date.strftime('%d.%m.%y') }}
+                      </option>
+                      {% endfor %}
+                    </select>  
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Ученик</label>
+                  <div class="col-lg-9">
+                    <select disabled class="form-control" id="student_id" name="student_id">
+                      {% for student in students %}
+                      <option value="{{ student.student.id }}">
+                        {{ student.student.fio }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                 <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Курс</label>
+                  <div class="col-lg-9">
+                    <select disabled class="form-control"  id="modal_course_id" name="modal_course_id" >
+                     
+                  <option value="{{ course.id }}" selected="selected">{{ course.title }}</option>
+
+                    </select>
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Сумма</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_pay" name="modal_pay" placeholder="Сумма" type="text">
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Дополнительная плата</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_cost_extra" name="modal_cost_extra" placeholder="Сумма" type="text">
+                  </div>
+                </div>
+                <br/><br/>
+                <div class="form-group">
+                  <label for="inputEmail" class="col-lg-3 control-label">Комментарий к доп. плате</label>
+                  <div class="col-lg-9">
+                    <input class="form-control" id="modal_cost_extra_comment" name="modal_cost_extra_comment" placeholder="Комментарий" type="text">
+                  </div>
+                </div>
+            </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Оплатить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal" id="time_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Новое занятие</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_timesheet_id" name="modal_timesheet_id" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Аудитория</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_place" name="modal_place">
+                          {% for place in places %}
+                            <option value="{{ place.id }}">{{ place.title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">День недели</label>
+                      <div class="col-lg-9">
+                        <select class="form-control" id="modal_dow" name="modal_dow">
+                          <option value="0">Понедельник</option>
+                          <option value="1">Вторник</option>
+                          <option value="2">Среда</option>
+                          <option value="3">Четверг</option>
+                          <option value="4">Пятница</option>
+                          <option value="5">Суббота</option>
+                          <option value="6">Воскресенье</option>
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+
+                    <div class = "col-lg-6">
+                      <h5 style = "text-align: center"> Начало занятий </h5>
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-3 control-label">Часы</label>
+                        <div class="col-lg-9">
+                          <input class="form-control" id="modal_hod" name="modal_hod" placeholder="Часы" type="text">
+                        </div>
+                      </div>
+                    
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-3 control-label">Минуты</label>
+                        <div class="col-lg-9">
+                          <input class="form-control" id="modal_moh" name="modal_moh" placeholder="Минуты" type="text">
+                        </div>
+                      </div>
+                    </div>  
+                     <div class = "col-lg-6">
+                      <h5 style = "text-align: center"> Длительность занятий </h5>
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-3 control-label"> Часы</label>
+                        <div class="col-lg-9">
+                          <input class="form-control" id="modal_hoe" name="modal_hoe" placeholder="Часы" type="text">
+                        </div>
+                      </div>
+                     
+                      <div class="form-group">
+                        <label for="inputEmail" class="col-lg-3 control-label"> Минуты</label>
+                        <div class="col-lg-9">
+                          <input class="form-control" id="modal_moe" name="modal_moe" placeholder="Минуты" type="text">
+                        </div>
+                      </div>
+                    </div>  
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="modal" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Запись на курс</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_id" name="modal_id" value=""/>
+                    <div class="form-group" id="modal_student_id_field">
+                      <label for="inputEmail" class="col-lg-3 control-label">Ученик</label>
+                      <div class="col-lg-9">
+                        <select data-placeholder="Выберите ученика" id="modal_student_id" name="modal_student_id">
+                          <option></option>
+                          {% for student in all_students %}
+                          <option value="{{ student.id }}">{{ student.fio }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Стоимость занятия</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_cost" name="modal_cost" placeholder="Cost" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Комментарий</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_cost_comment" name="modal_cost_comment" placeholder="Комментарий" type="text">
+                      </div>
+                    </div>
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal_info">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Ученик</h4>
+      </div>
+      <form action="" method="POST">
+          <div class="modal-body">
+                <fieldset>
+                    <input type="hidden" id="modal_id_info" name="modal_id_info" value=""/>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">ФИО</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_fio" name="modal_fio" placeholder="FIO" type="text">
+                      </div>
+                    </div>
+                     <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Логин</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_username" name="modal_username" placeholder="Имя пользователя" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Пароль</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_password" name="modal_password" placeholder="Пароль" type="password" value="1234">
+                      </div>   
+                    <br><br>
+                     <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Телефон</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_phone" name="modal_phone" placeholder="Phone No" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                     <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Дата рождения</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_age" name="modal_age" placeholder="Birth Date" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Родители</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_parent" name="modal_parent" placeholder="Parent" type="text">
+                      </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                      <label for="inputEmail" class="col-lg-3 control-label">Email</label>
+                      <div class="col-lg-9">
+                        <input class="form-control" id="modal_email" name="modal_email" placeholder="Email" type="text">
+                      </div>
+                    </div>
+                   
+                </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

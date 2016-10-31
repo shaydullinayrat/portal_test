@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <h3><b>Ученик:</b> {{ user.student.fio }}</h3>
+   <!--  <h4><b>Средний балл:</b> {{ user.student.avg_points if user.student.avg_points else ' -' }}/100</h4> -->
+    
+    <h4><b>Курсы</b></h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-4">Название</th>
+          <th class="col-lg-4">Преподаватель</th>
+          <th class="col-lg-4">Количество занятий</th>
+         <!--  <th class="col-lg-3"></th> -->
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if not user.student.courses %}
+            <tr><td colspan="5" align="center"><b>В списке нет ни одного курса!</b></td></tr>
+        {% endif %}
+        {% for course in user.student.courses%}
+        <tr id="{{ course.id }}">
+          <td><a href="{{ url_for('show_student_course', course_id=course.course.id) }}"><b>{{ course.course.title }}</b></a></td>
+          <td>{{ course.course.teacher.fio }}({{ course.course.teacher.phone }})</td>
+          <td>{{ course.course.lessons.all()|length }}</td>
+          <!-- <td class="btn-group btn-group-justified">
+            <a class="btn btn-info" href="{{ url_for('show_student_course', course_id=course.course.id) }}">Перейти к занятиям</a>
+          </td> -->
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <h4><b>Занятия этой недели</b></h4>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">Курс</th>
+          <th class="col-lg-3">Преподаватель</th>
+          <th class="col-lg-3">Время</th>
+          <!-- <th class="col-lg-2">Место</th> -->
+          <th class="col-lg-3">Состояние</th>
+          <!-- <th class="col-lg-4"></th> -->
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if lessons|length == 0%}
+            <tr><td colspan="5" align="center"><b>Сегодня нет занятий!</b></td></tr>
+        {% endif %}
+        {% for lesson in lessons%}
+        <tr id="{{ lesson.id }}"
+              {% if lesson.status == 1 %} class="success"
+              {% elif lesson.status == -1 %} class="warning"
+              {% endif%}>
+          <td><b><a href="{{ url_for('show_student_lesson', lesson_id=lesson.id) }}">{{ lesson.course.title }}</a></b></td>
+          <td>{{ lesson.course.teacher.fio }}({{ lesson.course.teacher.phone }})</td>
+          <td>
+            {% if lesson.timesheet.dow == 0 %}
+              Пн
+            {% elif lesson.timesheet.dow == 1 %}
+              Вт
+            {% elif lesson.timesheet.dow == 2 %}
+              Ср
+            {% elif lesson.timesheet.dow == 3 %}
+              Чт
+            {% elif lesson.timesheet.dow == 4 %}
+              Пт
+            {% elif lesson.timesheet.dow == 5 %}
+              Сб
+            {% elif lesson.timesheet.dow == 6 %}
+              Вск
+            {% endif%}
+            {{ lesson.date.strftime('%H:%M') }}
+          </td>
+          <!-- <td>{{ lesson.timesheet.place.title }}</td> -->
+          <td>{% if lesson.status == 1 %}Проведен
+              {% elif lesson.status == -1 %}Отменен
+              {% endif%}
+          </td>
+<!--           <td>
+            {% if lesson.text or lesson.tasks.all()|length > 0%}
+              <a class="btn btn-primary" href="{{ url_for('show_student_lesson', lesson_id=lesson.id) }}">Конспект + ДЗ</a>
+            {% endif %}
+          </td> -->
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+  <!--   <h2><b>Домашнее задание</b></h2>
+    <table class="table table-striped table-hover panel panel-primary">
+      <thead class="panel-heading">
+        <tr>
+          <th class="col-lg-3">Тема</th>
+          <th class="col-lg-1">Дата</th>
+          <th class="col-lg-2">Оценка</th>
+          <th class="col-lg-2">Ответ</th>
+          <th class="col-lg-3">Ответ преподавателя</th>
+          <th class="col-lg-2"></th>
+        </tr>
+      </thead>
+      <tbody class="panel-body">
+        {% if tasks|length == 0%}
+            <tr><td colspan="5" align="center"><b>Сегодня нет домашнего задания!</b></td></tr>
+        {% endif %}
+        {% for task in tasks%}
+        <tr {% if task.status == 1 %} class="success"{% endif%}>
+          <td><b>{{ task.homework.title }}-{{ task.title }}</b></td>
+          <td>{{ task.lesson.date.strftime('%d.%m.%Y') }}</td>
+          <td>{{ task.points if task.points else '-' }}</td>
+          <td>{{ task.student_answer if task.student_answer else '-' }}</td>
+          <td>{{ task.teacher_answer if task.teacher_answer else '-' }}</td>
+          <td>
+            {% if task.status == 0 %}
+              <a class="btn btn-primary" href="{{ url_for('show_student_task', task_id=task.id) }}">Выполнить</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table> -->
+</div>
+{% endblock %}
